@@ -1,0 +1,7 @@
+analyzer:
+  errors:
+    deprecated_member_use: ignore
+    prefer_adjacent_string_concatenation: ignore
+include: package:flutter_lints/flutter.yaml
+linter:
+  rules:

@@ -1,0 +1,4 @@
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Aplikasi ini membutuhkan akses ke galeri untuk menyimpan video dan gambar yang didownload</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Aplikasi ini membutuhkan akses untuk menambahkan video dan gambar ke galeri Anda</string>
