@@ -6,6 +6,7 @@ A Flutter app for downloading media from popular social platforms. Paste a link,
 
 ## Table of Contents
 
+- [Screenshot](#screenshot)
 - [Supported Platforms](#supported-platforms)
 - [Features](#features)
 - [Requirements](#requirements)
