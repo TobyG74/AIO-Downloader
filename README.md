@@ -1,8 +1,12 @@
 ﻿# AIO Downloader
 
-> v1.0.0
+<div align="center">
+   <img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader/refs/heads/master/icons.png" alt="Icon" width="250">
+   <h3>A Flutter app for downloading media from popular social platforms. Paste a link, pick a quality, save to gallery.</h3>
+</div>
 
-A Flutter app for downloading media from popular social platforms. Paste a link, pick a quality, save to gallery.
+
+
 
 ## Table of Contents
 
@@ -21,18 +25,18 @@ A Flutter app for downloading media from popular social platforms. Paste a link,
 
 ## Screenshot
 
-- Dark / Light mode
+### Dark / Light mode
 
-<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/dashboard_dark.png" alt="Screenshot" width="400">
-<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/dashboard_light.png" alt="Screenshot" width="400">
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader/refs/heads/master/assets/dashboard_dark.jpg" alt="Screenshot" width="400">
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader/refs/heads/master/assets/dashboard_light.jpg" alt="Screenshot" width="400">
 
-- Download history with filters
+### Download history with filters
 
-<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/download_history.png" alt="Screenshot" width="400">
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader/refs/heads/master/assets/download_history.jpg" alt="Screenshot" width="400">
 
-- About
+### About
 
-<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/about.png" alt="Screenshot" width="400">
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader/refs/heads/master/assets/about.jpg" alt="Screenshot" width="400">
 
 ## Supported Platforms
 
