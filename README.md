@@ -18,6 +18,21 @@ A Flutter app for downloading media from popular social platforms. Paste a link,
 
 ---
 
+## Screenshot
+
+- Dark / Light mode
+
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/dashboard_dark.png" alt="Screenshot" width="400">
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/dashboard_light.png" alt="Screenshot" width="400">
+
+- Download history with filters
+
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/download_history.png" alt="Screenshot" width="400">
+
+- About
+
+<img src="https://raw.githubusercontent.com/TobyG74/AIO-Downloader-Dart/master/assets/about.png" alt="Screenshot" width="400">
+
 ## Supported Platforms
 
 | Platform | What you can download |

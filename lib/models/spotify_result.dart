@@ -1,4 +1,3 @@
-/// Represents a Spotify track/episode fetched from the embed page
 class SpotifyTrack {
   final String title;
   final String artist;
