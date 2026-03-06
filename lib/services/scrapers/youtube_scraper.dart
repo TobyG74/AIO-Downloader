@@ -226,7 +226,7 @@ class YouTubeScraper {
         audioFormats: audioFormats,
       );
     } catch (e) {
-      throw Exception('YouTube download gagal: $e');
+      throw Exception('Failed to download YouTube video: $e');
     }
   }
 
@@ -255,7 +255,7 @@ class YouTubeScraper {
       final match = ytDataRegex.firstMatch(html);
       
       if (match == null) {
-        throw Exception('Gagal mengekstrak data playlist');
+        throw Exception('Failed to extract playlist data');
       }
 
       final jsonData = jsonDecode(match.group(1)!);
@@ -265,7 +265,7 @@ class YouTubeScraper {
       final contents = jsonData['contents']?['twoColumnBrowseResultsRenderer']?['tabs']?[0]?['tabRenderer']?['content']?['sectionListRenderer']?['contents']?[0]?['itemSectionRenderer']?['contents']?[0]?['playlistVideoListRenderer']?['contents'] as List?;
 
       if (contents == null || sidebar == null) {
-        throw Exception('Gagal mengekstrak konten playlist');
+        throw Exception('Failed to extract playlist content');
       }
 
       // Extract playlist info from sidebar
@@ -344,7 +344,7 @@ class YouTubeScraper {
         playlistItems: playlistItems,
       );
     } catch (e) {
-      throw Exception('Gagal memuat playlist: $e');
+      throw Exception('Failed to load playlist: $e');
     }
   }
 
@@ -377,7 +377,7 @@ class YouTubeScraper {
       }
       throw Exception('Unrecognized response format (HTTP ${response.statusCode}): ${data.toString().substring(0, (data.toString().length).clamp(0, 200))}');
     } catch (e) {
-      throw Exception('Gagal mendapatkan link video ${quality}p: $e');
+      throw Exception('Failed to get video link ${quality}p: $e');
     }
   }
 
@@ -412,14 +412,14 @@ class YouTubeScraper {
       );
 
       final data = response.data;
-      if (data == null) throw Exception('Response kosong (HTTP ${response.statusCode})');
+      if (data == null) throw Exception('Empty response from server (HTTP ${response.statusCode})');
 
       if (data is Map) {
         final result = DlsrvResponse.fromJson(data);
         if (!result.isSuccess) {
           throw Exception(
-            'Server menolak: status="${result.status}" (HTTP ${response.statusCode}). '
-            'URL=${result.url.isEmpty ? "(kosong)" : result.url}',
+            'Server rejected: status="${result.status}" (HTTP ${response.statusCode}). '
+            'URL=${result.url.isEmpty ? "(empty)" : result.url}',
           );
         }
         return result;
@@ -431,7 +431,7 @@ class YouTubeScraper {
         '${preview.substring(0, preview.length.clamp(0, 150))}',
       );
     } catch (e) {
-      throw Exception('Gagal mendapatkan link audio $quality: $e');
+      throw Exception('Failed to get audio link $quality: $e');
     }
   }
 }

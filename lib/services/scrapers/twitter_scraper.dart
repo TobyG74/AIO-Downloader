@@ -8,163 +8,130 @@ class TwitterScraper {
     receiveTimeout: const Duration(seconds: 30),
     headers: {
       'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+          'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
     },
   ));
 
-  final String _snapvidBase = 'https://snapvid.net';
+  final String _apiBase = 'https://twitterdownloader.snapsave.app';
 
+  /// Download Twitter media
   Future<TwitterResult> download(String url) async {
     try {
-      final cftoken = await _getUserVerifyToken(url);
 
+      final token = await _getToken();
+      if (token.isEmpty) {
+        throw Exception('Failed to get token');
+      }
+      
       final response = await _dio.post(
-        '$_snapvidBase/api/ajaxSearch',
+        '$_apiBase/action.php',
         data: {
-          'q': url,
-          'w': '',
-          'v': 'v2',
-          'lang': 'en',
-          'cftoken': cftoken,
+          'url': url,
+          'token': token,
         },
         options: Options(
           contentType: Headers.formUrlEncodedContentType,
+          headers: {
+            'Accept': '*/*',
+            'Origin': _apiBase,
+            'Referer': '$_apiBase/',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
         ),
       );
 
-      if (response.data != null && response.data['status'] == 'ok') {
-        return _parseTwitterData(response.data['data']);
-      } else {
-        throw Exception('Failed to get Twitter data');
-      }
-    } catch (e) {
-      throw Exception('Twitter scraping failed: $e');
-    }
-  }
 
-  Future<String> _getUserVerifyToken(String url) async {
-    try {
-      final response = await _dio.post(
-        '$_snapvidBase/api/userverify',
-        data: {'url': url},
-        options: Options(
-          contentType: Headers.formUrlEncodedContentType,
-        ),
-      );
-
-      if (response.data != null && response.data['success'] == true) {
-        return response.data['token'];
-      } else {
-        throw Exception('Failed to get user verify token');
+      if (response.statusCode != 200) {
+        throw Exception('API returned status ${response.statusCode}');
       }
+
+      // Response is JSON with 'data' field containing HTML
+      final html = response.data['data']?.toString() ?? '';
+      
+      if (html.isEmpty) {
+        throw Exception('Empty response data');
+      }
+
+      final result = _parseTwitterData(html);
+
+      return result;
     } catch (error) {
-      throw Exception('User verify failed: $error');
+      throw Exception('Twitter download failed: $error');
     }
   }
 
-  TwitterResult _parseTwitterData(String htmlData) {
-    final document = html_parser.parse(htmlData);
+  Future<String> _getToken() async {
+    try {
+      final response = await _dio.get(
+        _apiBase,
+        options: Options(
+          responseType: ResponseType.plain,
+        ),
+      );
 
-    // Get title
-    String title = 'Twitter Media';
-    final titleElement = document.querySelector('.tw-middle .content h3');
-    if (titleElement != null) {
-      title = titleElement.text.trim();
+      if (response.statusCode != 200) {
+        return '';
+      }
+
+      final document = html_parser.parse(response.data);
+      final tokenInput = document.querySelector('input[name="token"]');
+      
+      return tokenInput?.attributes['value'] ?? '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// Parse HTML response to extract download links
+  TwitterResult _parseTwitterData(String htmlContent) {
+    final document = html_parser.parse(htmlContent);
+
+    // Extract from #download-block
+    final downloadBlock = document.querySelector('#download-block');
+    if (downloadBlock == null) {
+      throw Exception('Download block not found');
     }
 
-    // Get thumbnail (from first video/image)
-    String thumbnail = '';
+    // Get download URL
+    final downloadLink = downloadBlock.querySelector('.abuttons > a');
+    final url = downloadLink?.attributes['href'];
     
-    // Get video qualities
-    List<TwitterVideoQuality> videos = [];
-    List<String> images = [];
+    if (url == null || url.isEmpty) {
+      throw Exception('Download URL not found');
+    }
 
-    // Check for video format (tw-video class) - could be multiple
-    final videoContainers = document.querySelectorAll('.tw-video');
-    if (videoContainers.isNotEmpty) {
-      // Video/GIF format - parse from each .tw-video container
-      for (var i = 0; i < videoContainers.length; i++) {
-        final container = videoContainers[i];
-        
-        // Get thumbnail for this specific video/GIF
-        String videoThumbnail = '';
-        final thumbnailImg = container.querySelector('.thumbnail .image-tw img');
-        if (thumbnailImg != null) {
-          videoThumbnail = thumbnailImg.attributes['src'] ?? '';
-        }
-        
-        // Set main thumbnail from first container
-        if (thumbnail.isEmpty && videoThumbnail.isNotEmpty) {
-          thumbnail = videoThumbnail;
-        }
-        
-        // Get download links from this container
-        final downloadLinks = container.querySelectorAll('.dl-action p a');
-        for (final link in downloadLinks) {
-          final text = link.text;
-          final href = link.attributes['href'];
+    // Get description
+    final descSpan = document.querySelector('.videotikmate-middle > p > span');
+    final description = descSpan?.text.trim() ?? '';
 
-          if (href != null && href.isNotEmpty && href.startsWith('http')) {
-            if (text.contains('MP4')) {
-              // Extract quality from text like "Download MP4 (1920p)" or "Download MP4 (gif)"
-              final qualityMatch = RegExp(r'\(([^)]+)\)').firstMatch(text);
-              var quality = qualityMatch?.group(1) ?? 'Unknown';
-              
-              // Add index if multiple videos/gifs
-              if (videoContainers.length > 1) {
-                quality = '$quality - ${i + 1}';
-              }
-              
-              videos.add(TwitterVideoQuality(
-                quality: quality,
-                url: href,
-                thumbnail: videoThumbnail,
-              ));
-            }
-            // Don't add images here as they are video thumbnails, not separate images
-          }
-        }
-      }
-      
-      // Get duration from first container
-      String duration = '';
-      final durationElement = videoContainers.first.querySelector('.tw-middle .content p');
-      if (durationElement != null) {
-        duration = durationElement.text.trim();
-      }
-      
+    // Get thumbnail
+    final thumbnailImg = document.querySelector('.videotikmate-left > img');
+    final thumbnail = thumbnailImg?.attributes['src'];
+
+    // Check type (video or image)
+    final buttonSpan = downloadBlock.querySelector('.abuttons > a > span > span');
+    final buttonText = buttonSpan?.text.trim() ?? '';
+    final isVideo = !buttonText.toLowerCase().contains('photo');
+
+    if (isVideo) {
       return TwitterResult(
-        title: title,
-        thumbnail: thumbnail,
-        duration: duration,
-        videos: videos,
-        images: images,
+        title: description,
+        thumbnail: thumbnail ?? '',
+        duration: '',
+        videos: [
+          TwitterVideoQuality(
+            quality: 'HD',
+            url: url,
+            thumbnail: thumbnail ?? '',
+          ),
+        ],
       );
     } else {
-      // Photo format - parse from .photo-list
-      final photoItems = document.querySelectorAll('.download-box li');
-      for (final item in photoItems) {
-        final imgElement = item.querySelector('.download-items__thumb img');
-        final linkElement = item.querySelector('.download-items__btn a');
-        
-        if (imgElement != null && thumbnail.isEmpty) {
-          thumbnail = imgElement.attributes['src'] ?? '';
-        }
-        
-        if (linkElement != null) {
-          final href = linkElement.attributes['href'];
-          if (href != null && href.isNotEmpty && href.startsWith('http')) {
-            images.add(href);
-          }
-        }
-      }
-      
       return TwitterResult(
-        title: title,
-        thumbnail: thumbnail,
+        title: description,
+        thumbnail: thumbnail ?? '',
         duration: '',
-        videos: videos,
-        images: images,
+        images: [url],
       );
     }
   }

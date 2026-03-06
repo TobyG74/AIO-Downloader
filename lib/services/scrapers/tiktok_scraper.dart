@@ -21,13 +21,18 @@ class TikTokScraper {
 
   /// Download TikTok video using selected server
   /// [server] - Choose between musicaldown (default) or ssstik
-  Future<TikTokResult> download(String url, {TikTokServer server = TikTokServer.musicaldown}) async {
+  /// [cookies] - CF cookies for bypassing Cloudflare (from WebViewCookieDialog)
+  Future<TikTokResult> download(
+    String url, {
+    TikTokServer server = TikTokServer.musicaldown,
+    String? cookies,
+  }) async {
     try {
       switch (server) {
         case TikTokServer.musicaldown:
-          return await _downloadFromMusicalDown(url);
+          return await _downloadFromMusicalDown(url, cfCookies: cookies);
         case TikTokServer.ssstik:
-          return await _downloadFromSSSTik(url);
+          return await _downloadFromSSSTik(url, cfCookies: cookies);
       }
     } catch (error) {
       throw Exception('TikTok download failed: $error');
@@ -35,13 +40,23 @@ class TikTokScraper {
   }
 
   /// Download using MusicalDown API
-  Future<TikTokResult> _downloadFromMusicalDown(String url) async {
+  Future<TikTokResult> _downloadFromMusicalDown(String url, {String? cfCookies}) async {
     try {
-      final getResponse = await _dio.get(_musicaldownUrl);
+      final getResponse = await _dio.get(
+        _musicaldownUrl,
+        options: Options(
+          headers: cfCookies != null ? {'Cookie': cfCookies} : null,
+          validateStatus: (_) => true,
+        ),
+      );
+      if (getResponse.statusCode == 403) throw Exception('403');
       final document = html_parser.parse(getResponse.data);
-      final cookie = getResponse.headers['set-cookie']?.first.split(';')[0] ?? '';
+      final sessionCookie = getResponse.headers['set-cookie']?.first.split(';')[0] ?? '';
+      final cookie = [
+        if (cfCookies != null && cfCookies.isNotEmpty) cfCookies,
+        if (sessionCookie.isNotEmpty) sessionCookie,
+      ].join('; ');
 
-      // Extract form inputs
       final inputs = document.querySelectorAll('div > input');
       final requestData = <String, String>{};
       
@@ -145,9 +160,16 @@ class TikTokScraper {
   }
 
   /// Download using SSSTik API
-  Future<TikTokResult> _downloadFromSSSTik(String url) async {
+  Future<TikTokResult> _downloadFromSSSTik(String url, {String? cfCookies}) async {
     try {
-      final getResponse = await _dio.get(_ssstikUrl);
+      final getResponse = await _dio.get(
+        _ssstikUrl,
+        options: Options(
+          headers: cfCookies != null ? {'Cookie': cfCookies} : null,
+          validateStatus: (_) => true,
+        ),
+      );
+      if (getResponse.statusCode == 403) throw Exception('403');
       final ttValue = _extractTTValue(getResponse.data);
       
       if (ttValue == null) {
@@ -166,6 +188,7 @@ class TikTokScraper {
           headers: {
             'Origin': _ssstikUrl,
             'Referer': '$_ssstikUrl/en',
+            if (cfCookies != null) 'Cookie': cfCookies,
           },
         ),
       );

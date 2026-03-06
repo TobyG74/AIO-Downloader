@@ -19,16 +19,21 @@ class PinterestScraper {
   ));
 
   /// Get the hidden token field from the initial page load (required for POST request)
-  Future<Map<String, String>> _fetchTokenField() async {
-    final response = await _dio.get('$_baseUrl/id1');
+  Future<Map<String, String>> _fetchTokenField({String? cookies}) async {
+    final response = await _dio.get(
+      '$_baseUrl/id1',
+      options: Options(
+        headers: cookies != null ? {'Cookie': cookies} : null,
+        validateStatus: (_) => true,
+      ),
+    );
+    if (response.statusCode == 403) throw Exception('403');
     final document = html_parser.parse(response.data as String);
 
-    // Find hidden input inside the form (not "NbFvo" but whatever name it has)
     final hiddenInputs = document.querySelectorAll('form input[type="hidden"]');
     for (final input in hiddenInputs) {
       final name = input.attributes['name'] ?? '';
       final value = input.attributes['value'] ?? '';
-      // Skip known fixed fields (lang, etc.)
       if (name.isNotEmpty && name != 'lang' && value.isNotEmpty) {
         return {name: value};
       }
@@ -37,7 +42,7 @@ class PinterestScraper {
   }
 
   /// Make the POST request to get download links, using the extracted token field
-  Future<String> _postAction(String url, Map<String, String> tokenField) async {
+  Future<String> _postAction(String url, Map<String, String> tokenField, {String? cookies}) async {
     final data = {
       'url': url,
       ...tokenField,
@@ -49,6 +54,7 @@ class PinterestScraper {
       data: data,
       options: Options(
         contentType: Headers.formUrlEncodedContentType,
+        headers: cookies != null ? {'Cookie': cookies} : null,
       ),
     );
 
@@ -68,7 +74,6 @@ class PinterestScraper {
         document.querySelector('.media-left img, .media .image img');
     final thumbnailUrl = thumbImg?.attributes['src'] ?? '';
 
-    //  Extract title/author (if any)
     final strongEl = document.querySelector('.media-content strong');
     final spanEl = document.querySelector('.media-content .video-des');
     final title = strongEl?.text.trim() ?? 'Pinterest';
@@ -124,10 +129,10 @@ class PinterestScraper {
   }
 
   /// Main entry point — fetch metadata + download links for a Pinterest URL
-  Future<PinterestResult> download(String url) async {
+  Future<PinterestResult> download(String url, {String? cookies}) async {
     try {
-      final token = await _fetchTokenField();
-      final html = await _postAction(url, token);
+      final token = await _fetchTokenField(cookies: cookies);
+      final html = await _postAction(url, token, cookies: cookies);
       return _parseResponse(html);
     } on DioException catch (e) {
       throw Exception('Pinterest network error: ${e.message}');
