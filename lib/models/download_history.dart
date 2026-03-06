@@ -55,12 +55,23 @@ class DownloadHistory {
         return '📷';
       case 'facebook':
         return '👍';
+      case 'twitter':
+      case 'x':
+        return '🐦';
+      case 'threads':
+        return '🧵';
+      case 'spotify':
+        return '🎵';
+      case 'pinterest':
+        return '📌';
       default:
         return '📱';
     }
   }
 
   String get downloadTypeIcon {
-    return downloadType == 'video' ? '🎬' : '🖼️';
+    if (downloadType == 'video') return '🎬 Video';
+    if (downloadType == 'audio') return '🎵 Audio';
+    return '🖼️ Image';
   }
 }

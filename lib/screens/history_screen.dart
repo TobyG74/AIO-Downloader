@@ -196,6 +196,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             const SizedBox(width: 6),
                             _buildPlatformChip('Twitter', 'twitter'),
                             const SizedBox(width: 6),
+                            _buildPlatformChip('Threads', 'threads'),
+                            const SizedBox(width: 6),
                             _buildPlatformChip('Spotify', 'spotify'),
                             const SizedBox(width: 6),
                             _buildPlatformChip('Pinterest', 'pinterest'),
@@ -315,6 +317,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             headers: const {
                                               'User-Agent':
                                                   'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36',
+                                              'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                                              'Accept-Language': 'en-US,en;q=0.9',
+                                            },
+                                            loadingBuilder: (context, child, loadingProgress) {
+                                              if (loadingProgress == null) return child;
+                                              return Container(
+                                                width: 56,
+                                                height: 56,
+                                                color: Theme.of(context).colorScheme.surfaceVariant,
+                                                child: Center(
+                                                  child: SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      value: loadingProgress.expectedTotalBytes != null
+                                                          ? loadingProgress.cumulativeBytesLoaded / 
+                                                            loadingProgress.expectedTotalBytes!
+                                                          : null,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
                                             },
                                             errorBuilder: (_, __, ___) =>
                                                 _placeholderIcon(
@@ -330,71 +355,93 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     style: const TextStyle(fontSize: 13),
                                   ),
                                   subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: Row(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Platform badge
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 7,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primaryContainer,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              FaIcon(
-                                                _platformFaIcon(item.platform),
-                                                size: 10,
+                                        Row(
+                                          children: [
+                                            // Platform badge
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 7,
+                                                vertical: 2,
+                                              ),
+                                              decoration: BoxDecoration(
                                                 color: Theme.of(context)
                                                     .colorScheme
-                                                    .primary,
+                                                    .primaryContainer,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                item.platform,
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .primary,
-                                                ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  FaIcon(
+                                                    _platformFaIcon(item.platform),
+                                                    size: 10,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimaryContainer,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    item.platform,
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimaryContainer,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        // Type badge
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 7,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            '${item.downloadTypeIcon} ${item.downloadType}',
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
                                             ),
-                                          ),
+                                            const SizedBox(width: 6),
+                                            // Type badge
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 7,
+                                                vertical: 2,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    item.downloadType == 'video'
+                                                        ? Icons.videocam_rounded
+                                                        : item.downloadType == 'audio'
+                                                            ? Icons.music_note_rounded
+                                                            : Icons.image_rounded,
+                                                    size: 10,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSecondaryContainer,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    item.downloadType,
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSecondaryContainer,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        const Spacer(),
+                                        const SizedBox(height: 4),
                                         Text(
                                           _formatDate(item.downloadDate),
                                           style: TextStyle(
@@ -487,7 +534,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
       case 'facebook':
         return FontAwesomeIcons.facebookF;
       case 'twitter':
+      case 'x':
         return FontAwesomeIcons.xTwitter;
+      case 'threads':
+        return FontAwesomeIcons.threads;
       case 'spotify':
         return FontAwesomeIcons.spotify;
       case 'pinterest':
@@ -510,6 +560,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       'instagram': FontAwesomeIcons.instagram,
       'facebook': FontAwesomeIcons.facebookF,
       'twitter': FontAwesomeIcons.xTwitter,
+      'threads': FontAwesomeIcons.threads,
       'spotify': FontAwesomeIcons.spotify,
       'pinterest': FontAwesomeIcons.pinterest,
     };
