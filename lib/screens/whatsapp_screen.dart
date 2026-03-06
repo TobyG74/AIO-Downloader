@@ -26,11 +26,20 @@ class _WhatsAppStatusScreenState extends State<WhatsAppStatusScreen> {
   // Track which items are being saved
   final Set<String> _saving = {};
   bool _savingAll = false;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
-    _initialize();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _initialize();
+    }
   }
 
   Future<void> _initialize() async {
