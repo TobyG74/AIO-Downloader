@@ -34,6 +34,13 @@ class UrlDetectorService {
       RegExp(r'x\.com\/.*\/status\/', caseSensitive: false),
       RegExp(r't\.co\/', caseSensitive: false),
     ],
+    'Threads': [
+      RegExp(r'threads\.net\/@', caseSensitive: false),
+      RegExp(r'threads\.net\/t\/', caseSensitive: false),
+      RegExp(r'www\.threads\.net', caseSensitive: false),
+      RegExp(r'threads\.com\/@.*\/post\/', caseSensitive: false),
+      RegExp(r'www\.threads\.com\/@', caseSensitive: false),
+    ],
     'Pinterest': [
       RegExp(r'pinterest\.com\/pin\/', caseSensitive: false),
       RegExp(r'pinterest\.\w+\/pin\/', caseSensitive: false),
