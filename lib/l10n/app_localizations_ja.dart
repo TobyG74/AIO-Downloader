@@ -63,6 +63,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get spotifyDesc => 'Spotifyからトラックをダウンロード';
 
   @override
+  String get threads => 'Threads';
+
+  @override
+  String get threadsDesc => 'Threadsから動画と画像をダウンロード';
+
+  @override
   String get whatsappStatus => 'WhatsApp Status';
 
   @override
@@ -415,4 +421,26 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get appUpToDate => 'アプリは最新です';
+
+  @override
+  String get webviewVerifyTitle => '接続の確認';
+
+  @override
+  String get webviewVerifySuccess => '確認が完了しました！';
+
+  @override
+  String get webviewLoading => '読み込み中...';
+
+  @override
+  String get webviewSearchingCookie => 'Cookieを取得中...';
+
+  @override
+  String get webviewContinueManual => '手動で続行';
+
+  @override
+  String get webviewCancelled => '確認がキャンセルされました。もう一度お試しください。';
+
+  @override
+  String get webviewRequired =>
+      '接続がブロックされました (403)。右上の ἱ0 アイコンをタップして確認後、再試行してください。';
 }

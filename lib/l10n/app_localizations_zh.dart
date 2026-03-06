@@ -63,6 +63,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get spotifyDesc => '下载Spotify歌曲';
 
   @override
+  String get threads => 'Threads';
+
+  @override
+  String get threadsDesc => '从Threads下载视频和图片';
+
+  @override
   String get whatsappStatus => 'WhatsApp Status';
 
   @override
@@ -413,4 +419,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get appUpToDate => '应用已是最新版本';
+
+  @override
+  String get webviewVerifyTitle => '连接验证';
+
+  @override
+  String get webviewVerifySuccess => '验证成功！';
+
+  @override
+  String get webviewLoading => '加载中...';
+
+  @override
+  String get webviewSearchingCookie => '正在获取Cookie...';
+
+  @override
+  String get webviewContinueManual => '手动继续';
+
+  @override
+  String get webviewCancelled => '验证已取消，请重试。';
+
+  @override
+  String get webviewRequired => '连接被拦截 (403)。请点击右上角 ἱ0 图标进行验证，然后重试。';
 }

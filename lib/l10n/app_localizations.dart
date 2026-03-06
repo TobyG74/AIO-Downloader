@@ -210,6 +210,18 @@ abstract class AppLocalizations {
   /// **'Download lagu Spotify'**
   String get spotifyDesc;
 
+  /// No description provided for @threads.
+  ///
+  /// In id, this message translates to:
+  /// **'Threads'**
+  String get threads;
+
+  /// No description provided for @threadsDesc.
+  ///
+  /// In id, this message translates to:
+  /// **'Download video & gambar dari Threads'**
+  String get threadsDesc;
+
   /// No description provided for @whatsappStatus.
   ///
   /// In id, this message translates to:
@@ -851,6 +863,48 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Aplikasi sudah versi terbaru'**
   String get appUpToDate;
+
+  /// No description provided for @webviewVerifyTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Verifikasi Koneksi'**
+  String get webviewVerifyTitle;
+
+  /// No description provided for @webviewVerifySuccess.
+  ///
+  /// In id, this message translates to:
+  /// **'Verifikasi berhasil!'**
+  String get webviewVerifySuccess;
+
+  /// No description provided for @webviewLoading.
+  ///
+  /// In id, this message translates to:
+  /// **'Memuat...'**
+  String get webviewLoading;
+
+  /// No description provided for @webviewSearchingCookie.
+  ///
+  /// In id, this message translates to:
+  /// **'Mencari cookie...'**
+  String get webviewSearchingCookie;
+
+  /// No description provided for @webviewContinueManual.
+  ///
+  /// In id, this message translates to:
+  /// **'Lanjutkan Manual'**
+  String get webviewContinueManual;
+
+  /// No description provided for @webviewCancelled.
+  ///
+  /// In id, this message translates to:
+  /// **'Verifikasi dibatalkan. Silakan coba lagi.'**
+  String get webviewCancelled;
+
+  /// No description provided for @webviewRequired.
+  ///
+  /// In id, this message translates to:
+  /// **'Koneksi diblokir (403). Ketuk ikon ἱ0 di kanan atas untuk verifikasi, lalu coba lagi.'**
+  String get webviewRequired;
 }
 
 class _AppLocalizationsDelegate

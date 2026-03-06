@@ -18,6 +18,8 @@
   "pinterestDesc": "Pinterestから動画、GIF、画像をダウンロード",
   "spotify": "Spotify",
   "spotifyDesc": "Spotifyからトラックをダウンロード",
+  "threads": "Threads",
+  "threadsDesc": "Threadsから動画と画像をダウンロード",
   "whatsappStatus": "WhatsApp Status",
   "whatsappStatusDesc": "WhatsApp Statusから写真と動画を保存",
   "history": "ダウンロード履歴",
@@ -124,5 +126,14 @@
   "releaseNotes": "リリースノート：",
   "checkingUpdate": "アップデートを確認中...",
   "updateCheckFailed": "アップデート確認に失敗しました",
-  "appUpToDate": "アプリは最新です"
+  "appUpToDate": "アプリは最新です",
+  "webviewVerifyTitle": "接続の確認",
+  "webviewVerifySuccess": "確認が完了しました！",
+  "webviewLoading": "読み込み中...",
+  "webviewSearchingCookie": "Cookieを取得中...",
+  "webviewContinueManual": "手動で続行",
+  "webviewCancelled": "確認がキャンセルされました。もう一度お試しください。",
+  "webviewRequired": "接続がブロックされました (403)。右上の \u1f310 アイコンをタップして確認後、再試行してください。"
 }
+
+

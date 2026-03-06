@@ -64,6 +64,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spotifyDesc => 'Download Spotify tracks';
 
   @override
+  String get threads => 'Threads';
+
+  @override
+  String get threadsDesc => 'Download Threads videos & images';
+
+  @override
   String get whatsappStatus => 'WhatsApp Status';
 
   @override
@@ -418,4 +424,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appUpToDate => 'App is up to date';
+
+  @override
+  String get webviewVerifyTitle => 'Connection Verification';
+
+  @override
+  String get webviewVerifySuccess => 'Verification successful!';
+
+  @override
+  String get webviewLoading => 'Loading...';
+
+  @override
+  String get webviewSearchingCookie => 'Looking for cookies...';
+
+  @override
+  String get webviewContinueManual => 'Continue Manually';
+
+  @override
+  String get webviewCancelled => 'Verification cancelled. Please try again.';
+
+  @override
+  String get webviewRequired =>
+      'Connection blocked (403). Tap the ἱ0 icon at the top right to verify, then try again.';
 }

@@ -64,6 +64,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get spotifyDesc => 'Download lagu Spotify';
 
   @override
+  String get threads => 'Threads';
+
+  @override
+  String get threadsDesc => 'Download video & gambar dari Threads';
+
+  @override
   String get whatsappStatus => 'WhatsApp Status';
 
   @override
@@ -418,4 +424,26 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get appUpToDate => 'Aplikasi sudah versi terbaru';
+
+  @override
+  String get webviewVerifyTitle => 'Verifikasi Koneksi';
+
+  @override
+  String get webviewVerifySuccess => 'Verifikasi berhasil!';
+
+  @override
+  String get webviewLoading => 'Memuat...';
+
+  @override
+  String get webviewSearchingCookie => 'Mencari cookie...';
+
+  @override
+  String get webviewContinueManual => 'Lanjutkan Manual';
+
+  @override
+  String get webviewCancelled => 'Verifikasi dibatalkan. Silakan coba lagi.';
+
+  @override
+  String get webviewRequired =>
+      'Koneksi diblokir (403). Ketuk ikon ἱ0 di kanan atas untuk verifikasi, lalu coba lagi.';
 }

@@ -18,6 +18,8 @@
   "pinterestDesc": "Download video, gambar & GIF dari Pinterest",
   "spotify": "Spotify",
   "spotifyDesc": "Download lagu Spotify",
+  "threads": "Threads",
+  "threadsDesc": "Download video & gambar dari Threads",
   "whatsappStatus": "WhatsApp Status",
   "whatsappStatusDesc": "Simpan foto & video dari WhatsApp Status teman",
   "history": "Download History",
@@ -124,5 +126,14 @@
   "releaseNotes": "Catatan Rilis:",
   "checkingUpdate": "Memeriksa pembaruan...",
   "updateCheckFailed": "Gagal memeriksa pembaruan",
-  "appUpToDate": "Aplikasi sudah versi terbaru"
+  "appUpToDate": "Aplikasi sudah versi terbaru",
+  "webviewVerifyTitle": "Verifikasi Koneksi",
+  "webviewVerifySuccess": "Verifikasi berhasil!",
+  "webviewLoading": "Memuat...",
+  "webviewSearchingCookie": "Mencari cookie...",
+  "webviewContinueManual": "Lanjutkan Manual",
+  "webviewCancelled": "Verifikasi dibatalkan. Silakan coba lagi.",
+  "webviewRequired": "Koneksi diblokir (403). Ketuk ikon \u1f310 di kanan atas untuk verifikasi, lalu coba lagi."
 }
+
+

@@ -18,6 +18,8 @@
   "pinterestDesc": "Download videos, GIFs & images from Pinterest",
   "spotify": "Spotify",
   "spotifyDesc": "Download Spotify tracks",
+  "threads": "Threads",
+  "threadsDesc": "Download Threads videos & images",
   "whatsappStatus": "WhatsApp Status",
   "whatsappStatusDesc": "Save photos & videos from WhatsApp Status",
   "history": "Download History",
@@ -124,5 +126,14 @@
   "releaseNotes": "Release Notes:",
   "checkingUpdate": "Checking for updates...",
   "updateCheckFailed": "Failed to check for updates",
-  "appUpToDate": "App is up to date"
+  "appUpToDate": "App is up to date",
+  "webviewVerifyTitle": "Connection Verification",
+  "webviewVerifySuccess": "Verification successful!",
+  "webviewLoading": "Loading...",
+  "webviewSearchingCookie": "Looking for cookies...",
+  "webviewContinueManual": "Continue Manually",
+  "webviewCancelled": "Verification cancelled. Please try again.",
+  "webviewRequired": "Connection blocked (403). Tap the \u1f310 icon at the top right to verify, then try again."
 }
+
+

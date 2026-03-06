@@ -18,6 +18,8 @@
   "pinterestDesc": "从Pinterest下载视频、GIF和图片",
   "spotify": "Spotify",
   "spotifyDesc": "下载Spotify歌曲",
+  "threads": "Threads",
+  "threadsDesc": "从Threads下载视频和图片",
   "whatsappStatus": "WhatsApp Status",
   "whatsappStatusDesc": "保存WhatsApp状态中的照片和视频",
   "history": "下载记录",
@@ -124,5 +126,14 @@
   "releaseNotes": "更新说明：",
   "checkingUpdate": "正在检查更新...",
   "updateCheckFailed": "检查更新失败",
-  "appUpToDate": "应用已是最新版本"
+  "appUpToDate": "应用已是最新版本",
+  "webviewVerifyTitle": "连接验证",
+  "webviewVerifySuccess": "验证成功！",
+  "webviewLoading": "加载中...",
+  "webviewSearchingCookie": "正在获取Cookie...",
+  "webviewContinueManual": "手动继续",
+  "webviewCancelled": "验证已取消，请重试。",
+  "webviewRequired": "连接被拦截 (403)。请点击右上角 \u1f310 图标进行验证，然后重试。"
 }
+
+
