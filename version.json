@@ -1,13 +1,13 @@
 {
-  "version": "1.0.0",
-  "build_number": 1,
-  "release_date": "2026-03-05",
+  "version": "1.0.1",
+  "build_number": 2,
+  "release_date": "2026-03-06",
   "download_url": "https://github.com/TobyG74/AIO-Downloader/releases/latest",
   "release_notes": {
-    "en": "Initial release with support for TikTok, YouTube, Instagram, Facebook, Pinterest, Spotify,  Twitter, and WhatsApp Status downloads",
-    "id": "Rilis awal dengan dukungan untuk unduhan TikTok, YouTube, Instagram, Facebook, Pinterest, Spotify, Twitter, dan Status WhatsApp",
-    "zh": "初始版本支持TikTok、YouTube、Instagram、Facebook、Pinterest、Spotify、Twitter和WhatsApp状态下载",
-    "ja": "TikTok、YouTube、Instagram、Facebook、Pinterest、Spotify、Twitter、WhatsAppステータスのダウンロードをサポートした初期リリース"
+    "en": "Added Threads support, improved history UI with better icons and thumbnails, WebView verification for all platforms, bug fixes and localization improvements",
+    "id": "Menambahkan dukungan Threads, perbaikan UI history dengan ikon dan thumbnail yang lebih baik, verifikasi WebView untuk semua platform, perbaikan bug dan peningkatan lokalisasi",
+    "zh": "添加Threads支持，改进历史记录界面，改善图标和缩略图，所有平台支持WebView验证，错误修复和本地化改进",
+    "ja": "Threadsサポートを追加、履歴UIの改善（アイコンとサムネイルの改善）、全プラットフォームでWebView検証をサポート、バグ修正とローカライゼーションの改善"
   },
   "min_supported_version": "1.0.0",
   "force_update": false
