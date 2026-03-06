@@ -2,18 +2,24 @@
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../l10n/app_localizations.dart';
+import '../models/instagram_result.dart';
+import '../models/facebook_result.dart';
 import '../models/pinterest_result.dart';
 import '../models/spotify_result.dart';
 import '../models/youtube_result.dart';
+import '../models/threads_result.dart';
 import '../services/scrapers/tiktok_scraper.dart';
 import '../services/scrapers/youtube_scraper.dart';
 import '../services/scrapers/instagram_scraper.dart';
 import '../services/scrapers/facebook_scraper.dart';
 import '../services/scrapers/twitter_scraper.dart';
+import '../services/scrapers/threads_scraper.dart';
 import '../services/scrapers/pinterest_scraper.dart';
 import '../services/scrapers/spotify_scraper.dart';
 import '../services/download_service.dart';
 import '../services/id3_tagger.dart';
+import '../services/web_cookie_service.dart';
+import '../widgets/webview_cookie_dialog.dart';
 
 class DownloadScreen extends StatefulWidget {
   final String platform;
@@ -77,6 +83,14 @@ class _DownloadScreenState extends State<DownloadScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.platform} Downloader'),
+        actions: [
+          if (_isCookiePlatform)
+            IconButton(
+              icon: const Icon(Icons.travel_explore),
+              tooltip: 'Buka WebView',
+              onPressed: _openCookieWebView,
+            ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -233,7 +247,7 @@ class _DownloadScreenState extends State<DownloadScreen> {
       case 'Spotify':
         return 'open.spotify.com/track/xxxxx';
       default:
-        return 'www.example.com';
+        return 'www.threads.com/@user/post/xxxxx';
     }
   }
 
@@ -270,10 +284,16 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
       switch (widget.platform) {
         case 'TikTok':
-          final scraper = TikTokScraper();
-          result = await scraper.download(
-            _urlController.text.trim(),
-            server: _selectedTikTokServer,
+          final tiktokBaseUrl = _selectedTikTokServer == TikTokServer.ssstik
+              ? 'https://ssstik.io'
+              : 'https://musicaldown.com';
+          result = await _downloadWithCookies(
+            tiktokBaseUrl,
+            (cookies) => TikTokScraper().download(
+              _urlController.text.trim(),
+              server: _selectedTikTokServer,
+              cookies: cookies,
+            ),
           );
           break;
         case 'YouTube':
@@ -281,20 +301,30 @@ class _DownloadScreenState extends State<DownloadScreen> {
           result = await scraper.download(_urlController.text.trim());
           break;
         case 'Instagram':
-          final scraper = InstagramScraper();
-          result = await scraper.download(_urlController.text.trim());
+          // V2: Tidak butuh cookies - pakai snapsave.app
+          final instagramScraper = InstagramScraper();
+          result = await instagramScraper.download(_urlController.text.trim());
           break;
         case 'Facebook':
-          final scraper = FacebookScraper();
-          result = await scraper.download(_urlController.text.trim());
+          // V2: Tidak butuh cookies - pakai snapsave.app
+          final facebookScraper = FacebookScraper();
+          result = await facebookScraper.download(_urlController.text.trim());
           break;
         case 'Twitter':
-          final scraper = TwitterScraper();
-          result = await scraper.download(_urlController.text.trim());
+          // V2: Tidak butuh cookies - pakai twitterdownloader.snapsave.app
+          final twitterScraper = TwitterScraper();
+          result = await twitterScraper.download(_urlController.text.trim());
+          break;
+        case 'Threads':
+          // Pakai threads.snapsave.app
+          final threadsScraper = ThreadsScraper();
+          result = await threadsScraper.download(_urlController.text.trim());
           break;
         case 'Pinterest':
-          final pinterestScraper = PinterestScraper();
-          result = await pinterestScraper.download(_urlController.text.trim());
+          result = await _downloadWithCookies(
+            'https://pindown.io',
+            (cookies) => PinterestScraper().download(_urlController.text.trim(), cookies: cookies),
+          );
           break;
         case 'Spotify':
           final spotifyScraper = SpotifyScraper();
@@ -325,6 +355,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
       return _buildFacebookResult();
     } else if (widget.platform == 'Twitter') {
       return _buildTwitterResult();
+    } else if (widget.platform == 'Threads') {
+      return _buildThreadsResult();
     } else if (widget.platform == 'Pinterest') {
       return _buildPinterestResult();
     } else if (widget.platform == 'Spotify') {
@@ -1457,6 +1489,139 @@ class _DownloadScreenState extends State<DownloadScreen> {
     );
   }
 
+  Widget _buildThreadsResult() {
+    final l10n = AppLocalizations.of(context)!;
+    final result = _result as ThreadsResult;
+    
+    if (result.type == ThreadsMediaType.video && result.videos != null && result.videos!.isNotEmpty) {
+      // Video result (single or multiple)
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Threads Video${result.videos!.length > 1 ? 's' : ''}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              if (result.videos!.length > 1) ...[
+                const SizedBox(height: 8),
+                Text('${result.videos!.length} video(s) found'),
+              ],
+              const SizedBox(height: 16),
+              ...result.videos!.map((video) {
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    children: [
+                      // Thumbnail preview
+                      if (video.thumbnail != null && video.thumbnail!.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          child: AspectRatio(
+                            aspectRatio: 9 / 16,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.network(
+                                  video.thumbnail!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    color: Colors.grey[900],
+                                    child: const Icon(Icons.videocam, size: 64, color: Colors.white54),
+                                  ),
+                                ),
+                                Center(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black54,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.play_arrow, size: 48, color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () => _downloadThreadsVideo(video.url),
+                            icon: const Icon(Icons.download),
+                            label: Text(l10n.downloadVideo),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      );
+    } else if (result.images != null && result.images!.isNotEmpty) {
+      // Images result
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Threads Images',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text('${result.images!.length} image(s) found'),
+              const SizedBox(height: 16),
+              ...result.images!.map((image) {
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Image.network(
+                            image.url,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.image, size: 40),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => _downloadThreadsImage(image.url),
+                            icon: const Icon(Icons.download, size: 18),
+                            label: Text(l10n.download),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
   Widget _buildPinterestResult() {
     final l10n = AppLocalizations.of(context)!;
     final result = _result as PinterestResult;
@@ -2507,6 +2672,57 @@ class _DownloadScreenState extends State<DownloadScreen> {
     }
   }
 
+  bool get _isCookiePlatform => const {
+        'TikTok', 'Pinterest', 'Instagram', 'Facebook', 'Twitter', 'Threads',
+        'YouTube', 'Spotify'
+      }.contains(widget.platform);
+
+  String get _cookieBaseUrl {
+    switch (widget.platform) {
+      case 'TikTok':
+        return _selectedTikTokServer == TikTokServer.ssstik
+            ? 'https://ssstik.io'
+            : 'https://musicaldown.com';
+      case 'Pinterest':
+        return 'https://pindown.io';
+      case 'Instagram':
+      case 'Facebook':
+        return 'https://snapsave.app';
+      case 'Twitter':
+        return 'https://twitterdownloader.snapsave.app';
+      case 'Threads':
+        return 'https://threads.snapsave.app';
+      case 'YouTube':
+        return 'https://embed.dlsrv.online';
+      case 'Spotify':
+        return 'https://spotmate.online';
+      default:
+        return 'https://snapvid.net';
+    }
+  }
+
+  Future<void> _openCookieWebView() async {
+    await WebCookieService.instance.invalidate(_cookieBaseUrl);
+    if (!mounted) return;
+    await WebViewCookieDialog.show(context, _cookieBaseUrl);
+  }
+
+  Future<T> _downloadWithCookies<T>(
+    String baseUrl,
+    Future<T> Function(String? cookies) action,
+  ) async {
+    final cached = await WebCookieService.instance.getCookies(baseUrl);
+    
+    try {
+      return await action(cached);
+    } catch (e) {
+      if (!e.toString().contains('403')) rethrow;
+
+      final l10n = AppLocalizations.of(context)!;
+      throw Exception(l10n.webviewRequired);
+    }
+  }
+
   Future<void> _downloadInstagramVideo(String url) async {
     final l10n = AppLocalizations.of(context)!;
     setState(() {
@@ -2516,12 +2732,13 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
     try {
       final filename = 'instagram_${DateTime.now().millisecondsSinceEpoch}.mp4';
+      final instagramResult = _result as InstagramResult?;
       await _downloadService.downloadVideo(
         url: url,
         filename: filename,
         platform: 'Instagram',
         title: 'Instagram Video',
-        thumbnailUrl: '',
+        thumbnailUrl: instagramResult?.video?.thumbnail ?? '',
         originalUrl: _inputUrl,
         onProgress: _setProgress,
       );
@@ -2610,6 +2827,73 @@ class _DownloadScreenState extends State<DownloadScreen> {
     }
   }
 
+  Future<void> _downloadThreadsVideo(String url) async {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _isDownloading = true;
+      _downloadProgress = null;
+    });
+
+    try {
+      final filename = 'threads_${DateTime.now().millisecondsSinceEpoch}.mp4';
+      final threadsResult = _result as ThreadsResult?;
+      final thumbUrl = threadsResult?.videos?.firstWhere(
+        (v) => v.url == url,
+        orElse: () => threadsResult.videos!.first,
+      ).thumbnail ?? '';
+      await _downloadService.downloadVideo(
+        url: url,
+        filename: filename,
+        platform: 'Threads',
+        title: 'Threads Video',
+        thumbnailUrl: thumbUrl,
+        originalUrl: _inputUrl,
+        onProgress: _setProgress,
+      );
+
+      setState(() {
+        _isDownloading = false;
+      });
+      _showToast(l10n.downloadSuccess);
+    } catch (e) {
+      setState(() {
+        _isDownloading = false;
+      });
+      _showToast(l10n.downloadFailed(e.toString()));
+    }
+  }
+
+  Future<void> _downloadThreadsImage(String url) async {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _isDownloading = true;
+      _downloadProgress = null;
+    });
+
+    try {
+      final filename = 'threads_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      await _downloadService.downloadImage(
+        url: url,
+        filename: filename,
+        platform: 'Threads',
+        title: 'Threads Image',
+        thumbnailUrl: url,
+        originalUrl: _inputUrl,
+        onProgress: _setProgress,
+      );
+
+      setState(() {
+        _isDownloading = false;
+      });
+      _showToast(l10n.downloadSuccess);
+    } catch (e) {
+      setState(() {
+        _isDownloading = false;
+      });
+      _showToast(l10n.downloadFailed(e.toString()));
+    }
+  }
+
   Future<void> _downloadFacebookVideo(String url) async {
     final l10n = AppLocalizations.of(context)!;
     setState(() {
@@ -2619,12 +2903,13 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
     try {
       final filename = 'facebook_${DateTime.now().millisecondsSinceEpoch}.mp4';
+      final facebookResult = _result as FacebookResult?;
       await _downloadService.downloadVideo(
         url: url,
         filename: filename,
         platform: 'Facebook',
-        title: 'Facebook Video',
-        thumbnailUrl: '',
+        title: facebookResult?.title ?? 'Facebook Video',
+        thumbnailUrl: facebookResult?.thumbnail ?? '',
         originalUrl: _inputUrl,
         onProgress: _setProgress,
       );
