@@ -494,6 +494,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               const SizedBox(height: 12),
 
               PlatformCard(
+                icon: FontAwesomeIcons.threads,
+                title: l10n.threads,
+                description: l10n.threadsDesc,
+                color: Colors.black,
+                onTap: () => _navigateToDownload(context, 'Threads'),
+              ),
+              const SizedBox(height: 12),
+
+              PlatformCard(
                 icon: FontAwesomeIcons.pinterest,
                 title: l10n.pinterest,
                 description: l10n.pinterestDesc,
@@ -619,7 +628,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          'v1.0.0',
+                          'v1.0.1',
                           style: TextStyle(
                             fontSize: 11,
                             color: Theme.of(context).colorScheme.primary,
@@ -667,6 +676,41 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     label: 'tobyg74',
                     subtitle: 'GitHub',
                     url: 'https://github.com/tobyg74',
+                  ),
+
+                  const SizedBox(height: 16),
+                  const Divider(height: 1),
+                  const SizedBox(height: 12),
+
+                  // Co-Authors
+                  Text(
+                    'CO-AUTHORS',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  const _ContributorRow(
+                    name: 'arugaz',
+                    avatarUrl: 'https://avatars.githubusercontent.com/u/53950128?v=4',
+                    igUrl: 'https://instagram.com/ini.arga',
+                    igLabel: '@ini.arga',
+                    githubUrl: 'https://github.com/arugaz',
+                    githubLabel: 'arugaz',
+                  ),
+                  const SizedBox(height: 8),
+
+                  const _ContributorRow(
+                    name: 'nugraizy',
+                    avatarUrl: 'https://avatars.githubusercontent.com/u/69896924?v=4',
+                    igUrl: 'https://instagram.com/dizy.himself',
+                    igLabel: '@dizy.himself',
+                    githubUrl: 'https://github.com/nugraizy',
+                    githubLabel: 'nugraizy',
                   ),
 
                   const SizedBox(height: 16),
@@ -772,6 +816,110 @@ class _SocialLinkButton extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Contributor row with Instagram + GitHub links
+class _ContributorRow extends StatelessWidget {
+  final String name;
+  final String avatarUrl;
+  final String igUrl;
+  final String igLabel;
+  final String githubUrl;
+  final String githubLabel;
+
+  const _ContributorRow({
+    required this.name,
+    required this.avatarUrl,
+    required this.igUrl,
+    required this.igLabel,
+    required this.githubUrl,
+    required this.githubLabel,
+  });
+
+  Future<void> _launch(String url) async {
+    final uri = Uri.parse(url);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      await launchUrl(uri);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            backgroundImage: NetworkImage(avatarUrl),
+            onBackgroundImageError: (_, __) {},
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => _launch(igUrl),
+                      child: Row(
+                        children: [
+                          const FaIcon(FontAwesomeIcons.instagram,
+                              size: 11, color: Color(0xFFE1306C)),
+                          const SizedBox(width: 3),
+                          Text(
+                            igLabel,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFFE1306C),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () => _launch(githubUrl),
+                      child: Row(
+                        children: [
+                          FaIcon(FontAwesomeIcons.github,
+                              size: 11, color: Colors.grey[600]),
+                          const SizedBox(width: 3),
+                          Text(
+                            githubLabel,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
