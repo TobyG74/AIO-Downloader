@@ -63,6 +63,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get spotifyDesc => '下载Spotify歌曲';
 
   @override
+  String get soundcloud => 'SoundCloud';
+
+  @override
+  String get soundcloudDesc => '下载SoundCloud歌曲和播放列表';
+
+  @override
+  String get douyin => '抖音';
+
+  @override
+  String get douyinDesc => '从抖音下载视频和音乐';
+
+  @override
+  String get bilibili => 'BiliBili';
+
+  @override
+  String get bilibiliDesc => '从BiliBili TV下载视频';
+
+  @override
   String get threads => 'Threads';
 
   @override
@@ -135,6 +153,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get downloadAudio => '下载音频';
 
   @override
+  String get downloadMusic => '下载音乐';
+
+  @override
   String get downloadMp4 => '下载MP4';
 
   @override
@@ -179,6 +200,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get video => '视频';
+
+  @override
+  String get playlist => '播放列表';
+
+  @override
+  String get track => '歌曲';
+
+  @override
+  String get tracks => '歌曲';
 
   @override
   String get videos => '视频/GIF';
@@ -317,6 +347,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String totalDownloads(Object count) {
     return '总下载次数：$count';
   }
+
+  @override
+  String get storagePermissionDenied => '存储权限被拒绝';
+
+  @override
+  String get videoSavedToGallery => '视频已成功保存到相册';
+
+  @override
+  String get imageSavedToGallery => '图片已成功保存到相册';
 
   @override
   String get noData => '暂无数据';

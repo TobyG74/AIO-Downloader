@@ -64,6 +64,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spotifyDesc => 'Download Spotify tracks';
 
   @override
+  String get soundcloud => 'SoundCloud';
+
+  @override
+  String get soundcloudDesc => 'Download SoundCloud tracks & playlists';
+
+  @override
+  String get douyin => 'Douyin';
+
+  @override
+  String get douyinDesc => 'Download videos & music from Douyin';
+
+  @override
+  String get bilibili => 'BiliBili';
+
+  @override
+  String get bilibiliDesc => 'Download videos from BiliBili TV';
+
+  @override
   String get threads => 'Threads';
 
   @override
@@ -137,6 +155,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadAudio => 'Download Audio';
 
   @override
+  String get downloadMusic => 'Download Music';
+
+  @override
   String get downloadMp4 => 'Download MP4';
 
   @override
@@ -181,6 +202,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get video => 'Video';
+
+  @override
+  String get playlist => 'Playlist';
+
+  @override
+  String get track => 'track';
+
+  @override
+  String get tracks => 'tracks';
 
   @override
   String get videos => 'Video/GIF';
@@ -319,6 +349,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String totalDownloads(Object count) {
     return 'Total Downloads: $count';
   }
+
+  @override
+  String get storagePermissionDenied => 'Storage permission denied';
+
+  @override
+  String get videoSavedToGallery => 'Video successfully saved to gallery';
+
+  @override
+  String get imageSavedToGallery => 'Image successfully saved to gallery';
 
   @override
   String get noData => 'No data';

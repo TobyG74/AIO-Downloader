@@ -63,6 +63,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String get spotifyDesc => 'Spotifyからトラックをダウンロード';
 
   @override
+  String get soundcloud => 'SoundCloud';
+
+  @override
+  String get soundcloudDesc => 'SoundCloudからトラックとプレイリストをダウンロード';
+
+  @override
+  String get douyin => 'Douyin';
+
+  @override
+  String get douyinDesc => 'Douyinから動画と音楽をダウンロード';
+
+  @override
+  String get bilibili => 'BiliBili';
+
+  @override
+  String get bilibiliDesc => 'BiliBili TVから動画をダウンロード';
+
+  @override
   String get threads => 'Threads';
 
   @override
@@ -135,6 +153,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloadAudio => '音声をダウンロード';
 
   @override
+  String get downloadMusic => '音楽をダウンロード';
+
+  @override
   String get downloadMp4 => 'MP4をダウンロード';
 
   @override
@@ -179,6 +200,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get video => '動画';
+
+  @override
+  String get playlist => 'プレイリスト';
+
+  @override
+  String get track => '曲';
+
+  @override
+  String get tracks => '曲';
 
   @override
   String get videos => '動画/GIF';
@@ -317,6 +347,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String totalDownloads(Object count) {
     return '合計ダウンロード数: $count';
   }
+
+  @override
+  String get storagePermissionDenied => 'ストレージの権限が拒否されました';
+
+  @override
+  String get videoSavedToGallery => '動画をギャラリーに保存しました';
+
+  @override
+  String get imageSavedToGallery => '画像をギャラリーに保存しました';
 
   @override
   String get noData => 'データがありません';
