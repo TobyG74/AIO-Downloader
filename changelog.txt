@@ -1,65 +1,89 @@
 # AIO Downloader v1.0.2 Release Notes
 
 ## [ EN ]
-### Update v1.0.2 - Bilibili Support & Improvements
-- **New Features:**
-  - BiliBili (Bstation) downloader - Download videos from BiliBili TV with audio merging
-  - Support for multiple BiliBili URL formats (bili.im, b23.tv, bilibili.tv)
-  - Video thumbnail and title extraction from video pages
-  - Automatic video and audio merging using FFmpeg
+### Update v1.0.2 - New Platforms & Improvements
+- **New Platforms:**
+  - **BiliBili TV** - Download videos from BiliBili TV with automatic audio merging
+    * Support for multiple URL formats (bili.im, b23.tv, bilibili.tv)
+    * Video thumbnail and title extraction from video pages
+    * Multiple quality selection with H.264 codec filtering
+  - **Douyin (抖音)** - Download videos from Chinese version of TikTok
+    * Quality selection for videos
+    * Support for Douyin share links
+  - **SoundCloud** - Download tracks with metadata
+    * High-quality audio download
+    * Track metadata and artwork extraction
 
 - **Improvements:**
-  - Enhanced Bilibili download with proper CDN headers (fixes 403 errors)
+  - Enhanced video download with proper CDN headers (fixes 403 errors)
   - History now displays video thumbnails for better organization
   - Platform list reorganized with Douyin placed below TikTok
   - Replaced discontinued ffmpeg package with maintained alternative
+  - Dedicated result widgets for all platforms
 
 - **Technical:**
   - Added support for short URL redirects (bili.im, b23.tv)
   - Implemented JSON-LD metadata extraction for thumbnails
-  - Quality selection with H.264 codec filtering
+  - FFmpeg integration for video/audio merging
+  - AGP 9.0+ compatibility fix
 
 ---
 
 ## [ ID ]
-### Pembaruan v1.0.2 - Dukungan Bilibili & Peningkatan
-- **Fitur Baru:**
-  - Downloader BiliBili (Bstation) - Unduh video dari BiliBili TV dengan penggabungan audio
-  - Dukungan untuk berbagai format URL BiliBili (bili.im, b23.tv, bilibili.tv)
-  - Ekstraksi thumbnail dan judul video dari halaman video
-  - Penggabungan video dan audio otomatis menggunakan FFmpeg
+### Pembaruan v1.0.2 - Platform Baru & Peningkatan
+- **Platform Baru:**
+  - **BiliBili TV** - Unduh video dari BiliBili TV dengan penggabungan audio otomatis
+    * Dukungan untuk berbagai format URL (bili.im, b23.tv, bilibili.tv)
+    * Ekstraksi thumbnail dan judul video dari halaman video
+    * Pemilihan kualitas dengan filter codec H.264
+  - **Douyin (抖音)** - Unduh video dari versi Tiongkok TikTok
+    * Pemilihan kualitas untuk video
+    * Dukungan untuk link share Douyin
+  - **SoundCloud** - Unduh track dengan metadata
+    * Download audio kualitas tinggi
+    * Ekstraksi metadata dan artwork track
 
 - **Peningkatan:**
-  - Download Bilibili yang ditingkatkan dengan header CDN yang tepat (memperbaiki error 403)
+  - Download video yang ditingkatkan dengan header CDN yang tepat (memperbaiki error 403)
   - Riwayat kini menampilkan thumbnail video untuk organisasi yang lebih baik
   - Daftar platform direorganisasi dengan Douyin ditempatkan di bawah TikTok
   - Mengganti paket ffmpeg yang tidak lagi dikelola dengan alternatif yang aktif
+  - Widget hasil khusus untuk semua platform
 
 - **Teknis:**
   - Menambahkan dukungan redirect URL pendek (bili.im, b23.tv)
   - Implementasi ekstraksi metadata JSON-LD untuk thumbnail
-  - Pemilihan kualitas dengan filter codec H.264
+  - Integrasi FFmpeg untuk penggabungan video/audio
+  - Perbaikan kompatibilitas AGP 9.0+
 
 ---
 
 ## [ ZH ]
-### 更新 v1.0.2 - BiliBili 支持与改进
-- **新功能:**
-  - BiliBili (Bstation) 下载器 - 从 BiliBili TV 下载带音频合并的视频
-  - 支持多种 BiliBili URL 格式 (bili.im, b23.tv, bilibili.tv)
-  - 从视频页面提取视频缩略图和标题
-  - 使用 FFmpeg 自动合并视频和音频
+### 更新 v1.0.2 - 新平台与改进
+- **新平台:**
+  - **BiliBili TV** - 从 BiliBili TV 下载带自动音频合并的视频
+    * 支持多种 URL 格式 (bili.im, b23.tv, bilibili.tv)
+    * 从视频页面提取缩略图和标题
+    * 使用 H.264 编解码器过滤的多质量选择
+  - **抖音** - 从中国版 TikTok 下载视频
+    * 视频质量选择
+    * 支持抖音分享链接
+  - **SoundCloud** - 下载带元数据的音轨
+    * 高质量音频下载
+    * 音轨元数据和封面提取
 
 - **改进:**
-  - 增强的 Bilibili 下载，使用正确的 CDN 头（修复 403 错误）
+  - 增强的视频下载，使用正确的 CDN 头（修复 403 错误）
   - 历史记录现在显示视频缩略图以便更好地组织
   - 平台列表重新组织，抖音放在 TikTok 下方
   - 用维护的替代品替换已停止的 ffmpeg 包
+  - 为所有平台添加专用结果小部件
 
 - **技术:**
   - 添加短 URL 重定向支持 (bili.im, b23.tv)
   - 实现 JSON-LD 元数据提取缩略图
-  - 使用 H.264 编解码器过滤的质量选择
+  - FFmpeg 集成用于视频/音频合并
+  - AGP 9.0+ 兼容性修复
 
 ---
 
