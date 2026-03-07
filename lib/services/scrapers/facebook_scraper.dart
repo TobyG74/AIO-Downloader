@@ -53,8 +53,7 @@ class FacebookScraper {
     }
   }
 
-  /// Decrypt obfuscated JavaScript response from snapsave.app
-  /// Based on: github.com/ahmedrangel/snapsave-media-downloader
+  /// Decrypt obfuscated JavaScript response 
   String _decryptResponse(String encryptedData) {
     try {
       final params = _getEncodedParams(encryptedData);
