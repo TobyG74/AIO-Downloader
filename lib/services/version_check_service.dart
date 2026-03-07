@@ -5,12 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service to check for app updates from GitHub repository
 class VersionCheckService {
-  static const String _versionJsonUrl =
-      'https://raw.githubusercontent.com/TobyG74/AIO-Downloader/master/version.json';
+  static const String _githubApiUrl =
+      'https://api.github.com/repos/TobyG74/AIO-Downloader/releases/latest';
   
-  static const String _lastVersionCheckKey = 'last_version_check';
   static const String _skipVersionKey = 'skip_version';
-  static const Duration _checkInterval = Duration(hours: 24);
 
   final Dio _dio = Dio();
 
@@ -23,60 +21,74 @@ class VersionCheckService {
 
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
-      final currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 1;
 
-      final response = await _dio.get(_versionJsonUrl);
+      final response = await _dio.get(_githubApiUrl);
       if (response.statusCode != 200) {
         return null;
       }
 
-      final versionData = response.data is String
+      final releaseData = response.data is String
           ? jsonDecode(response.data)
           : response.data;
 
-      final latestVersion = versionData['version'] as String;
-      final latestBuildNumber = versionData['build_number'] as int;
-      final forceUpdate = versionData['force_update'] as bool? ?? false;
+      // Parse version from tag_name (e.g., "v1.0.1" -> "1.0.1")
+      String latestVersion = releaseData['tag_name'] as String;
+      if (latestVersion.startsWith('v')) {
+        latestVersion = latestVersion.substring(1);
+      }
 
-      final hasUpdate = _compareVersions(
-        currentVersion,
-        currentBuildNumber,
-        latestVersion,
-        latestBuildNumber,
-      );
+      final hasUpdate = _isNewerVersion(currentVersion, latestVersion);
 
       if (hasUpdate) {
-        await _saveLastCheckTime();
+        // Find appropriate APK download URL
+        final assets = releaseData['assets'] as List;
+        String downloadUrl = '';
+        
+        // Priority: arm64-v8a > universal (app-release.apk) > armeabi-v7a
+        final arm64Asset = assets.firstWhere(
+          (asset) => (asset['name'] as String).contains('arm64-v8a'),
+          orElse: () => null,
+        );
+        final universalAsset = assets.firstWhere(
+          (asset) => (asset['name'] as String) == 'app-release.apk',
+          orElse: () => null,
+        );
+        
+        if (arm64Asset != null) {
+          downloadUrl = arm64Asset['browser_download_url'] as String;
+        } else if (universalAsset != null) {
+          downloadUrl = universalAsset['browser_download_url'] as String;
+        } else if (assets.isNotEmpty) {
+          downloadUrl = assets.first['browser_download_url'] as String;
+        }
+
         return {
           'current_version': currentVersion,
           'latest_version': latestVersion,
-          'download_url': versionData['download_url'],
-          'release_notes': versionData['release_notes'],
-          'force_update': forceUpdate,
+          'download_url': downloadUrl,
+          'release_notes': releaseData['body'] ?? '',
+          'release_name': releaseData['name'] ?? '',
+          'force_update': false,
         };
       }
 
-      await _saveLastCheckTime();
       return null;
     } catch (e) {
       return null;
     }
   }
 
-  /// Compare version strings and build numbers
-  bool _compareVersions(
-    String currentVersion,
-    int currentBuild,
-    String latestVersion,
-    int latestBuild,
-  ) {
-    if (latestBuild > currentBuild) {
-      return true;
+  /// Check if latestVersion is newer than currentVersion
+  bool _isNewerVersion(String currentVersion, String latestVersion) {
+    // If versions are identical, no update needed
+    if (currentVersion == latestVersion) {
+      return false;
     }
 
     final current = _parseVersion(currentVersion);
     final latest = _parseVersion(latestVersion);
 
+    // Compare each part (major, minor, patch)
     for (int i = 0; i < 3; i++) {
       if (latest[i] > current[i]) return true;
       if (latest[i] < current[i]) return false;
@@ -107,23 +119,7 @@ class VersionCheckService {
       }
     }
 
-    final lastCheck = prefs.getInt(_lastVersionCheckKey);
-    if (lastCheck != null) {
-      final lastCheckTime = DateTime.fromMillisecondsSinceEpoch(lastCheck);
-      if (DateTime.now().difference(lastCheckTime) < _checkInterval) {
-        return true;
-      }
-    }
-
     return false;
-  }
-
-  Future<void> _saveLastCheckTime() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(
-      _lastVersionCheckKey,
-      DateTime.now().millisecondsSinceEpoch,
-    );
   }
 
   Future<void> skipVersion(String version) async {
