@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:video_player/video_player.dart';
 import '../l10n/app_localizations.dart';
 import '../models/whatsapp_status.dart';
 import '../services/whatsapp_status_service.dart';
@@ -460,8 +459,8 @@ class _WhatsAppStatusScreenState extends State<WhatsAppStatusScreen> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Video thumbnail with key to prevent rebuild issues
-          _VideoThumbnailWidget(
+          // Video thumbnail using video_player
+          _VideoPlayerThumbnail(
             key: ValueKey(status.filePath),
             videoPath: status.filePath,
           ),
@@ -532,40 +531,37 @@ class _WhatsAppStatusScreenState extends State<WhatsAppStatusScreen> {
 }
 
 // VIDEO THUMBNAIL WIDGET
-class _VideoThumbnailWidget extends StatefulWidget {
+// Video thumbnail widget using video_player
+class _VideoPlayerThumbnail extends StatefulWidget {
   final String videoPath;
 
-  const _VideoThumbnailWidget({super.key, required this.videoPath});
+  const _VideoPlayerThumbnail({super.key, required this.videoPath});
 
   @override
-  State<_VideoThumbnailWidget> createState() => _VideoThumbnailWidgetState();
+  State<_VideoPlayerThumbnail> createState() => _VideoPlayerThumbnailState();
 }
 
-class _VideoThumbnailWidgetState extends State<_VideoThumbnailWidget> {
-  String? _thumbnailPath;
+class _VideoPlayerThumbnailState extends State<_VideoPlayerThumbnail> {
+  VideoPlayerController? _controller;
   bool _isLoading = true;
   bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
-    _generateThumbnail();
+    _initializeVideo();
   }
 
-  Future<void> _generateThumbnail() async {
+  Future<void> _initializeVideo() async {
     try {
-      final tempDir = await getTemporaryDirectory();
-      final thumbnail = await VideoThumbnail.thumbnailFile(
-        video: widget.videoPath,
-        thumbnailPath: tempDir.path,
-        imageFormat: ImageFormat.JPEG,
-        maxHeight: 300,
-        quality: 75,
-      );
+      _controller = VideoPlayerController.file(File(widget.videoPath));
+      await _controller!.initialize();
+      
+      // Seek to first frame
+      await _controller!.seekTo(const Duration(milliseconds: 100));
 
       if (mounted) {
         setState(() {
-          _thumbnailPath = thumbnail;
           _isLoading = false;
         });
       }
@@ -577,6 +573,12 @@ class _VideoThumbnailWidgetState extends State<_VideoThumbnailWidget> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 
   @override
@@ -597,11 +599,18 @@ class _VideoThumbnailWidgetState extends State<_VideoThumbnailWidget> {
       );
     }
 
-    if (_thumbnailPath != null && !_hasError) {
-      return Image.file(
-        File(_thumbnailPath!),
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _buildPlaceholder(),
+    if (_controller != null && _controller!.value.isInitialized && !_hasError) {
+      return ClipRect(
+        child: SizedBox.expand(
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+              width: _controller!.value.size.width,
+              height: _controller!.value.size.height,
+              child: VideoPlayer(_controller!),
+            ),
+          ),
+        ),
       );
     }
 
@@ -612,7 +621,7 @@ class _VideoThumbnailWidgetState extends State<_VideoThumbnailWidget> {
     return Container(
       color: Colors.black87,
       child: const Center(
-        child: Icon(Icons.videocam, color: Colors.white, size: 36),
+        child: Icon(Icons.videocam, color: Colors.white60, size: 36),
       ),
     );
   }
