@@ -570,7 +570,6 @@ class _VideoThumbnailWidgetState extends State<_VideoThumbnailWidget> {
         });
       }
     } catch (e) {
-      debugPrint('Error generating thumbnail for ${widget.videoPath}: $e');
       if (mounted) {
         setState(() {
           _hasError = true;
