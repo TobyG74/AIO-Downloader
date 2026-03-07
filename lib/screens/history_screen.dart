@@ -188,6 +188,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             const SizedBox(width: 6),
                             _buildPlatformChip('TikTok', 'tiktok'),
                             const SizedBox(width: 6),
+                            _buildPlatformChip('Douyin', 'douyin'),
+                            const SizedBox(width: 6),
                             _buildPlatformChip('YouTube', 'youtube'),
                             const SizedBox(width: 6),
                             _buildPlatformChip('Instagram', 'instagram'),
@@ -201,6 +203,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             _buildPlatformChip('Spotify', 'spotify'),
                             const SizedBox(width: 6),
                             _buildPlatformChip('Pinterest', 'pinterest'),
+                            const SizedBox(width: 6),
+                            _buildPlatformChip('SoundCloud', 'soundcloud'),
+                            const SizedBox(width: 6),
+                            _buildPlatformChip('Bilibili', 'bilibili'),
                           ],
                         ),
                       ),
@@ -542,6 +548,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return FontAwesomeIcons.spotify;
       case 'pinterest':
         return FontAwesomeIcons.pinterest;
+      case 'soundcloud':
+        return FontAwesomeIcons.soundcloud;
+      case 'douyin':
+        return Icons.video_library;
+      case 'bilibili':
+        return Icons.play_circle_outline;
       default:
         return FontAwesomeIcons.link;
     }
@@ -563,6 +575,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
       'threads': FontAwesomeIcons.threads,
       'spotify': FontAwesomeIcons.spotify,
       'pinterest': FontAwesomeIcons.pinterest,
+      'soundcloud': FontAwesomeIcons.soundcloud,
+      'douyin': Icons.video_library,
+      'bilibili': Icons.play_circle_outline,
     };
 
     return FilterChip(
