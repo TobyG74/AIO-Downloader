@@ -4,6 +4,7 @@ class UrlDetectorService {
   static final Map<String, List<RegExp>> _platformPatterns = {
     'YouTube': [
       RegExp(r'youtube\.com\/watch', caseSensitive: false),
+      RegExp(r'youtube\.com\/playlist', caseSensitive: false),
       RegExp(r'youtu\.be\/', caseSensitive: false),
       RegExp(r'youtube\.com\/shorts\/', caseSensitive: false),
       RegExp(r'youtube\.com\/embed\/', caseSensitive: false),
@@ -25,6 +26,7 @@ class UrlDetectorService {
     'Facebook': [
       RegExp(r'facebook\.com\/.*\/videos\/', caseSensitive: false),
       RegExp(r'facebook\.com\/watch', caseSensitive: false),
+      RegExp(r'facebook\.com\/groups\/', caseSensitive: false),
       RegExp(r'fb\.watch\/', caseSensitive: false),
       RegExp(r'fb\.com\/', caseSensitive: false),
       RegExp(r'm\.facebook\.com', caseSensitive: false),
@@ -48,9 +50,31 @@ class UrlDetectorService {
     ],
     'Spotify': [
       RegExp(r'open\.spotify\.com\/track\/', caseSensitive: false),
+      RegExp(r'open\.spotify\.com\/playlist\/', caseSensitive: false),
       RegExp(r'open\.spotify\.com\/intl-[a-z]+\/track\/', caseSensitive: false),
+      RegExp(r'open\.spotify\.com\/intl-[a-z]+\/playlist\/', caseSensitive: false),
       RegExp(r'open\.spotify\.com\/episode\/', caseSensitive: false),
       RegExp(r'spotify\.link\/', caseSensitive: false),
+    ],
+    'SoundCloud': [
+      RegExp(r'soundcloud\.com\/[^\/]+\/[^\/]+', caseSensitive: false),
+      RegExp(r'soundcloud\.com\/[^\/]+\/sets\/', caseSensitive: false),
+      RegExp(r'soundcloud\.app\.goo\.gl', caseSensitive: false),
+      RegExp(r'on\.soundcloud\.com', caseSensitive: false),
+    ],
+    'Douyin': [
+      RegExp(r'v\.douyin\.com\/', caseSensitive: false),
+      RegExp(r'(www\.)?douyin\.com\/video\/', caseSensitive: false),
+      RegExp(r'(www\.)?douyin\.com\/user\/', caseSensitive: false),
+      RegExp(r'iesdouyin\.com', caseSensitive: false),
+      RegExp(r'm\.douyin\.com', caseSensitive: false),
+    ],
+    'Bilibili': [
+      RegExp(r'bilibili\.tv\/[a-z]{2}\/video\/', caseSensitive: false),
+      RegExp(r'bilibili\.tv\/video\/', caseSensitive: false),
+      RegExp(r'www\.bilibili\.tv', caseSensitive: false),
+      RegExp(r'b23\.tv\/', caseSensitive: false),
+      RegExp(r'bili\.im\/', caseSensitive: false),
     ],
   };
 
@@ -120,6 +144,12 @@ class UrlDetectorService {
         return '📌';
       case 'Spotify':
         return '🎵';
+      case 'SoundCloud':
+        return '🔊';
+      case 'Douyin':
+        return '🎬';
+      case 'Bilibili':
+        return '📺';
       default:
         return '🔗';
     }
