@@ -54,8 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         _showUpdateDialog(updateInfo);
       }
     } catch (e) {
-      // Silently fail - don't interrupt user experience
-      debugPrint('Version check error: $e');
+      // Silently fail 
     }
   }
 
@@ -65,12 +64,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final currentVersion = updateInfo['current_version'] as String;
     final latestVersion = updateInfo['latest_version'] as String;
     final downloadUrl = updateInfo['download_url'] as String;
-    final releaseNotes = updateInfo['release_notes'] as Map<String, dynamic>;
-    final forceUpdate = updateInfo['force_update'] as bool;
-
-    // Get release notes in current locale
-    final locale = Localizations.localeOf(context).languageCode;
-    final notes = releaseNotes[locale] ?? releaseNotes['en'] ?? '';
+    final releaseNotes = updateInfo['release_notes'] as String? ?? '';
+    final releaseName = updateInfo['release_name'] as String? ?? '';
+    final forceUpdate = updateInfo['force_update'] as bool? ?? false;
 
     showDialog(
       context: context,
@@ -149,7 +145,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-              if (notes.isNotEmpty) ...[
+              if (releaseName.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  releaseName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+              if (releaseNotes.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Text(
                   l10n.releaseNotes,
@@ -160,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
                 const SizedBox(height: 8),
                 Container(
+                  constraints: const BoxConstraints(maxHeight: 200),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surfaceVariant,
@@ -168,9 +176,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
                     ),
                   ),
-                  child: Text(
-                    notes,
-                    style: const TextStyle(fontSize: 12),
+                  child: SingleChildScrollView(
+                    child: Text(
+                      releaseNotes,
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ),
                 ),
               ],
@@ -215,9 +225,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
       (List<SharedMediaFile> files) {
         _handleSharedFiles(files);
-      },
-      onError: (err) {
-        debugPrint('Share intent stream error: $err');
       },
     );
 
@@ -458,6 +465,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               const SizedBox(height: 12),
 
               PlatformCard(
+                icon: Icons.video_library,
+                title: l10n.douyin,
+                description: l10n.douyinDesc,
+                color: Colors.black,
+                onTap: () => _navigateToDownload(context, 'Douyin'),
+              ),
+              const SizedBox(height: 12),
+
+              PlatformCard(
                 icon: FontAwesomeIcons.youtube,
                 title: l10n.youtube,
                 description: l10n.youtubeDesc,
@@ -517,6 +533,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 description: l10n.spotifyDesc,
                 color: const Color(0xFF1DB954),
                 onTap: () => _navigateToDownload(context, 'Spotify'),
+              ),
+              const SizedBox(height: 12),
+
+              PlatformCard(
+                icon: FontAwesomeIcons.soundcloud,
+                title: l10n.soundcloud,
+                description: l10n.soundcloudDesc,
+                color: const Color(0xFFFF5500),
+                onTap: () => _navigateToDownload(context, 'SoundCloud'),
+              ),
+              const SizedBox(height: 12),
+
+              PlatformCard(
+                icon: Icons.play_circle_outline,
+                title: l10n.bilibili,
+                description: l10n.bilibiliDesc,
+                color: const Color(0xFF00A1D6),
+                onTap: () => _navigateToDownload(context, 'Bilibili'),
               ),
               const SizedBox(height: 12),
 
