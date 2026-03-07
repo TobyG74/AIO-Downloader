@@ -78,7 +78,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get bilibili => 'BiliBili';
 
   @override
-  String get bilibiliDesc => 'Download videos from BiliBili TV';
+  String get bilibiliDesc => 'BiliBili TVから動画をダウンロード';
 
   @override
   String get threads => 'Threads';

@@ -78,7 +78,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get bilibili => 'BiliBili';
 
   @override
-  String get bilibiliDesc => 'Download videos from BiliBili TV';
+  String get bilibiliDesc => '从BiliBili TV下载视频';
 
   @override
   String get threads => 'Threads';
