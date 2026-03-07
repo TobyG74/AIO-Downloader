@@ -61,7 +61,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get spotify => 'Spotify';
 
   @override
-  String get spotifyDesc => 'Download lagu Spotify';
+  String get spotifyDesc => 'Download lagu & playlist Spotify';
 
   @override
   String get soundcloud => 'SoundCloud';
@@ -79,7 +79,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get bilibili => 'BiliBili';
 
   @override
-  String get bilibiliDesc => 'Download video dari BiliBili TV';
+  String get bilibiliDesc => 'Download videos from BiliBili TV';
 
   @override
   String get threads => 'Threads';

@@ -207,7 +207,7 @@ abstract class AppLocalizations {
   /// No description provided for @spotifyDesc.
   ///
   /// In en, this message translates to:
-  /// **'Download Spotify tracks'**
+  /// **'Download Spotify tracks & playlist'**
   String get spotifyDesc;
 
   /// No description provided for @soundcloud.

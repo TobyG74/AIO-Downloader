@@ -60,7 +60,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get spotify => 'Spotify';
 
   @override
-  String get spotifyDesc => 'Spotifyからトラックをダウンロード';
+  String get spotifyDesc => 'Spotifyのトラック＆プレイリストをダウンロード';
 
   @override
   String get soundcloud => 'SoundCloud';
@@ -78,7 +78,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get bilibili => 'BiliBili';
 
   @override
-  String get bilibiliDesc => 'BiliBili TVから動画をダウンロード';
+  String get bilibiliDesc => 'Download videos from BiliBili TV';
 
   @override
   String get threads => 'Threads';

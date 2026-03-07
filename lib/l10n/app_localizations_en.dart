@@ -61,7 +61,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get spotify => 'Spotify';
 
   @override
-  String get spotifyDesc => 'Download Spotify tracks';
+  String get spotifyDesc => 'Download Spotify tracks & playlist';
 
   @override
   String get soundcloud => 'SoundCloud';

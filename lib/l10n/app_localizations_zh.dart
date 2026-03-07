@@ -60,7 +60,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get spotify => 'Spotify';
 
   @override
-  String get spotifyDesc => '下载Spotify歌曲';
+  String get spotifyDesc => '下载Spotify歌曲和播放列表';
 
   @override
   String get soundcloud => 'SoundCloud';
@@ -78,7 +78,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get bilibili => 'BiliBili';
 
   @override
-  String get bilibiliDesc => '从BiliBili TV下载视频';
+  String get bilibiliDesc => 'Download videos from BiliBili TV';
 
   @override
   String get threads => 'Threads';
