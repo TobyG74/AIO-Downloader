@@ -33,3 +33,7 @@ coverage/
 .env
 .env.*
 flutter_launcher_icons-development.yaml
+
+# Keystore files (NEVER commit these!)
+*.jks
+*.keystore
