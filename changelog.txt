@@ -1,3 +1,68 @@
+# AIO Downloader v1.0.2 Release Notes
+
+## [ EN ]
+### Update v1.0.2 - Bilibili Support & Improvements
+- **New Features:**
+  - BiliBili (Bstation) downloader - Download videos from BiliBili TV with audio merging
+  - Support for multiple BiliBili URL formats (bili.im, b23.tv, bilibili.tv)
+  - Video thumbnail and title extraction from video pages
+  - Automatic video and audio merging using FFmpeg
+
+- **Improvements:**
+  - Enhanced Bilibili download with proper CDN headers (fixes 403 errors)
+  - History now displays video thumbnails for better organization
+  - Platform list reorganized with Douyin placed below TikTok
+  - Replaced discontinued ffmpeg package with maintained alternative
+
+- **Technical:**
+  - Added support for short URL redirects (bili.im, b23.tv)
+  - Implemented JSON-LD metadata extraction for thumbnails
+  - Quality selection with H.264 codec filtering
+
+---
+
+## [ ID ]
+### Pembaruan v1.0.2 - Dukungan Bilibili & Peningkatan
+- **Fitur Baru:**
+  - Downloader BiliBili (Bstation) - Unduh video dari BiliBili TV dengan penggabungan audio
+  - Dukungan untuk berbagai format URL BiliBili (bili.im, b23.tv, bilibili.tv)
+  - Ekstraksi thumbnail dan judul video dari halaman video
+  - Penggabungan video dan audio otomatis menggunakan FFmpeg
+
+- **Peningkatan:**
+  - Download Bilibili yang ditingkatkan dengan header CDN yang tepat (memperbaiki error 403)
+  - Riwayat kini menampilkan thumbnail video untuk organisasi yang lebih baik
+  - Daftar platform direorganisasi dengan Douyin ditempatkan di bawah TikTok
+  - Mengganti paket ffmpeg yang tidak lagi dikelola dengan alternatif yang aktif
+
+- **Teknis:**
+  - Menambahkan dukungan redirect URL pendek (bili.im, b23.tv)
+  - Implementasi ekstraksi metadata JSON-LD untuk thumbnail
+  - Pemilihan kualitas dengan filter codec H.264
+
+---
+
+## [ ZH ]
+### 更新 v1.0.2 - BiliBili 支持与改进
+- **新功能:**
+  - BiliBili (Bstation) 下载器 - 从 BiliBili TV 下载带音频合并的视频
+  - 支持多种 BiliBili URL 格式 (bili.im, b23.tv, bilibili.tv)
+  - 从视频页面提取视频缩略图和标题
+  - 使用 FFmpeg 自动合并视频和音频
+
+- **改进:**
+  - 增强的 Bilibili 下载，使用正确的 CDN 头（修复 403 错误）
+  - 历史记录现在显示视频缩略图以便更好地组织
+  - 平台列表重新组织，抖音放在 TikTok 下方
+  - 用维护的替代品替换已停止的 ffmpeg 包
+
+- **技术:**
+  - 添加短 URL 重定向支持 (bili.im, b23.tv)
+  - 实现 JSON-LD 元数据提取缩略图
+  - 使用 H.264 编解码器过滤的质量选择
+
+---
+
 # AIO Downloader v1.0.1 Release Notes
 
 ## [ EN ]

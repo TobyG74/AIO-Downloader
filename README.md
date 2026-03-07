@@ -32,10 +32,24 @@
 
 ## Co-Authors
 
-| | Name | Instagram | GitHub |
-|---|---|---|---|
-| <img src="https://avatars.githubusercontent.com/u/53950128?v=4" width="36" style="border-radius:50%"> | **arugaz** | [@ini.arga](https://instagram.com/ini.arga) | [arugaz](https://github.com/arugaz) |
-| <img src="https://avatars.githubusercontent.com/u/69896924?v=4" width="36" style="border-radius:50%"> | **nugraizy** | [@dizy.himself](https://instagram.com/dizy.himself) | [nugraizy](https://github.com/nugraizy) |
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/arugaz" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/53950128?v=4" width="80" style="border-radius:50%" alt="arugaz"/>
+        <br/>
+        <sub><b>arugaz</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/nugraizy" target="_blank">
+        <img src="https://avatars.githubusercontent.com/u/69896924?v=4" width="80" style="border-radius:50%" alt="nugraizy"/>
+        <br/>
+        <sub><b>nugraizy</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -61,6 +75,7 @@
 | Platform | What you can download |
 |---|---|
 | TikTok | Videos (no watermark / with watermark), slideshows |
+| Douyin (抖音) | Videos with quality selection |
 | YouTube | Videos (multiple qualities), audio (MP3 / M4A / Opus) |
 | Instagram | Photos, videos, carousels, Reels |
 | Facebook | Videos (multiple qualities) |
@@ -68,6 +83,8 @@
 | Threads | Videos, images |
 | Pinterest | Videos, GIFs, images |
 | Spotify | Tracks (MP3 with ID3 tags & cover art) |
+| SoundCloud | Tracks with metadata |
+| BiliBili TV | Videos with automatic audio merging, multiple qualities |
 | WhatsApp Status | Photos & videos from contacts' statuses |
 
 ---
