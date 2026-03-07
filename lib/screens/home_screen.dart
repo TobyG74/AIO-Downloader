@@ -662,7 +662,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          'v1.0.1',
+                          'v1.0.2',
                           style: TextStyle(
                             fontSize: 11,
                             color: Theme.of(context).colorScheme.primary,
