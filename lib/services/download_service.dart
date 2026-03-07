@@ -3,11 +3,52 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:gal/gal.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart';
 import 'history_service.dart';
 
 class DownloadService {
   final Dio _dio = Dio();
   final HistoryService _historyService = HistoryService();
+  static const platform = MethodChannel('com.tobz.aiodownloader/video_processor');
+
+  /// Fix video metadata using native Android MediaMuxer
+  /// This remuxes the video to ensure proper metadata and compatibility
+  Future<String?> _remuxVideoNative(String inputPath, String outputPath) async {
+    if (!Platform.isAndroid) {
+      return null; // Only supported on Android
+    }
+    
+    try {
+      final result = await platform.invokeMethod('remuxVideo', {
+        'inputPath': inputPath,
+        'outputPath': outputPath,
+      });
+      return result as String?;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Trigger Android Media Scanner to update file metadata
+  Future<void> _triggerMediaScan(String filePath) async {
+    if (Platform.isAndroid) {
+      try {
+        // Method 1: Broadcast media scanner
+        await Process.run('am', [
+          'broadcast',
+          '-a',
+          'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
+          '-d',
+          'file://$filePath',
+        ]);
+        
+        // Wait a bit for scan to complete
+        await Future.delayed(const Duration(milliseconds: 500));
+      } catch (e) {
+        // ignire errors, as this is just a best effort to update metadata
+      }
+    }
+  }
 
   /// Request storage permission
   Future<bool> requestStoragePermission() async {
@@ -48,19 +89,38 @@ class DownloadService {
 
       // Get temporary directory
       final tempDir = await getTemporaryDirectory();
-      final filePath = '${tempDir.path}/$filename';
+      final downloadPath = '${tempDir.path}/download_$filename';
 
       // Download file
       await _dio.download(
         url,
-        filePath,
+        downloadPath,
         onReceiveProgress: (received, total) {
           onProgress?.call(received, total);
         },
       );
 
+      String finalPath = downloadPath;
+      
+      // For YouTube videos, fix metadata using native MediaMuxer
+      if (platform.toLowerCase() == 'youtube' && filename.endsWith('.mp4')) {
+        final fixedPath = '${tempDir.path}/fixed_$filename';
+        final fixed = await _remuxVideoNative(downloadPath, fixedPath);
+        
+        if (fixed != null) {
+          finalPath = fixed;
+          // Delete original downloaded file
+          try {
+            await File(downloadPath).delete();
+          } catch (_) {}
+        }
+      }
+
       // Save to gallery
-      await Gal.putVideo(filePath);
+      await Gal.putVideo(finalPath);
+      
+      // Trigger media scan to ensure metadata is read correctly
+      await _triggerMediaScan(finalPath);
       
       // Save to history
       if (platform.isNotEmpty) {
@@ -74,11 +134,12 @@ class DownloadService {
       }
       
       // Delete temp file
-      final file = File(filePath);
+      final file = File(finalPath);
       if (await file.exists()) {
         await file.delete();
       }
-      return 'Video berhasil disimpan ke galeri';
+      
+      return 'Video saved successfully';
     } catch (error) {
       throw Exception('Download failed: $error');
     }
@@ -133,7 +194,7 @@ class DownloadService {
       if (await file.exists()) {
         await file.delete();
       }
-      return 'Gambar berhasil disimpan ke galeri';
+      return 'Image saved successfully';
     } catch (error) {
       throw Exception('Download failed: $error');
     }
@@ -150,6 +211,19 @@ class DownloadService {
     String originalUrl = '',
   }) async {
     try {
+      // Get temporary directory for initial download
+      final tempDir = await getTemporaryDirectory();
+      final tempPath = '${tempDir.path}/temp_$filename';
+      
+      // Download file to temp location
+      await _dio.download(
+        url,
+        tempPath,
+        onReceiveProgress: (received, total) {
+          onProgress?.call(received, total);
+        },
+      );
+
       String savedPath = '';
 
       if (Platform.isAndroid) {
@@ -187,24 +261,13 @@ class DownloadService {
         savedPath = '${appDir.path}/$filename';
       }
 
-      await _dio.download(
-        url,
-        savedPath,
-        onReceiveProgress: (received, total) {
-          onProgress?.call(received, total);
-        },
-      );
+      // Copy file to destination
+      final tempFile = File(tempPath);
+      await tempFile.copy(savedPath);
+      await tempFile.delete();
 
       // Trigger media scan on Android so Music apps see the file
-      if (Platform.isAndroid) {
-        try {
-          await Process.run('am', [
-            'broadcast',
-            '-a', 'android.intent.action.MEDIA_SCANNER_SCAN_FILE',
-            '-d', 'file://$savedPath',
-          ]);
-        } catch (_) {}
-      }
+      await _triggerMediaScan(savedPath);
 
       if (platform.isNotEmpty) {
         await _historyService.saveDownload(
@@ -251,7 +314,7 @@ class DownloadService {
           onProgress(i + 1, urls.length);
         }
       } catch (e) {
-        results.add('Gagal: ${e.toString()}');
+        results.add('Failed: ${e.toString()}');
       }
     }
 
@@ -295,4 +358,59 @@ class DownloadService {
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
   }
+
+  /// Expose dio instance for custom downloads
+  Dio get dio => _dio;
+
+  /// Download file to specific path (helper for complex downloads like Bilibili)
+  Future<void> downloadFileToPath({
+    required String url,
+    required String savePath,
+    Function(int received, int total)? onProgress,
+  }) async {
+    await _dio.download(
+      url,
+      savePath,
+      onReceiveProgress: (received, total) {
+        onProgress?.call(received, total);
+      },
+    );
+  }
+
+  /// Save an already-downloaded video file to gallery
+  Future<void> saveVideoToGallery({
+    required String filePath,
+    String platform = '',
+    String title = '',
+    String originalUrl = '',
+    String? thumbnailUrl,
+  }) async {
+    try {
+      // Request permission
+      final hasPermission = await requestStoragePermission();
+      if (!hasPermission) {
+        throw Exception('Storage permission denied');
+      }
+
+      // Save to gallery
+      await Gal.putVideo(filePath);
+      
+      // Trigger media scan
+      await _triggerMediaScan(filePath);
+      
+      // Save to history
+      if (platform.isNotEmpty) {
+        await _historyService.saveDownload(
+          platform: platform,
+          title: title,
+          url: originalUrl,
+          thumbnailUrl: thumbnailUrl ?? '',
+          downloadType: 'video',
+        );
+      }
+    } catch (error) {
+      throw Exception('Failed to save video: $error');
+    }
+  }
 }
+
