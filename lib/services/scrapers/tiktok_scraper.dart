@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:html/parser.dart' as html_parser;
 import '../../models/tiktok_result.dart';
 
-enum TikTokServer { musicaldown, ssstik }
-
 class TikTokScraper {
   final Dio _dio = Dio(BaseOptions(
     connectTimeout: const Duration(seconds: 30),
@@ -16,27 +14,11 @@ class TikTokScraper {
 
   final String _musicaldownUrl = 'https://musicaldown.com';
   final String _musicaldownApi = 'https://musicaldown.com/download';
-  final String _ssstikUrl = 'https://ssstik.io';
-  final String _ssstikApi = 'https://ssstik.io/abc?url=dl';
 
-  /// Download TikTok video using selected server
-  /// [server] - Choose between musicaldown (default) or ssstik
-  /// [cookies] - CF cookies for bypassing Cloudflare (from WebViewCookieDialog)
-  Future<TikTokResult> download(
-    String url, {
-    TikTokServer server = TikTokServer.musicaldown,
-    String? cookies,
-  }) async {
-    try {
-      switch (server) {
-        case TikTokServer.musicaldown:
-          return await _downloadFromMusicalDown(url, cfCookies: cookies);
-        case TikTokServer.ssstik:
-          return await _downloadFromSSSTik(url, cfCookies: cookies);
-      }
-    } catch (error) {
-      throw Exception('TikTok download failed: $error');
-    }
+  /// Download TikTok video using MusicalDown
+  /// [cfCookies] - CF cookies for bypassing Cloudflare (from WebViewCookieDialog)
+  Future<TikTokResult> download(String url, {String? cfCookies}) async {
+    return await _downloadFromMusicalDown(url, cfCookies: cfCookies);
   }
 
   /// Download using MusicalDown API
@@ -100,7 +82,8 @@ class TikTokScraper {
           duration: 0,
           cover: '',
           videoUrl: '',
-          videoUrlNoWatermark: '',
+          videoUrlHD: '',
+          videoUrlWatermark: '',
           music: '',
           playCount: 0,
           diggCount: 0,
@@ -145,7 +128,8 @@ class TikTokScraper {
         duration: 0,
         cover: avatar,
         videoUrl: videos['videoSD'] ?? videos['videoHD'] ?? '',
-        videoUrlNoWatermark: videos['videoHD'] ?? videos['videoSD'] ?? '',
+        videoUrlHD: videos['videoHD'] ?? '',
+        videoUrlWatermark: videos['videoWatermark'] ?? '',
         music: videos['music'] ?? '',
         playCount: 0,
         diggCount: 0,
@@ -159,133 +143,8 @@ class TikTokScraper {
     }
   }
 
-  /// Download using SSSTik API
-  Future<TikTokResult> _downloadFromSSSTik(String url, {String? cfCookies}) async {
-    try {
-      final getResponse = await _dio.get(
-        _ssstikUrl,
-        options: Options(
-          headers: cfCookies != null ? {'Cookie': cfCookies} : null,
-          validateStatus: (_) => true,
-        ),
-      );
-      if (getResponse.statusCode == 403) throw Exception('403');
-      final ttValue = _extractTTValue(getResponse.data);
-      
-      if (ttValue == null) {
-        throw Exception('Failed to get TT token');
-      }
-
-      final postResponse = await _dio.post(
-        _ssstikApi,
-        data: {
-          'id': url,
-          'locale': 'en',
-          'tt': ttValue,
-        },
-        options: Options(
-          contentType: Headers.formUrlEncodedContentType,
-          headers: {
-            'Origin': _ssstikUrl,
-            'Referer': '$_ssstikUrl/en',
-            if (cfCookies != null) 'Cookie': cfCookies,
-          },
-        ),
-      );
-
-      final document = html_parser.parse(postResponse.data);
-
-      // Parse author info
-      final avatar = document.querySelector('img.result_author')?.attributes['src'] ?? '';
-      final nickname = document.querySelector('h2')?.text.trim() ?? '';
-      final desc = document.querySelector('p.maintext')?.text.trim() ?? '';
-
-      // Parse statistics
-      final likeCount = document.querySelector('#trending-actions > .justify-content-start')?.text.trim() ?? '0';
-      final commentCount = document.querySelector('#trending-actions > .justify-content-center')?.text.trim() ?? '0';
-      final shareCount = document.querySelector('#trending-actions > .justify-content-end')?.text.trim() ?? '0';
-
-      // Check for images (slide post)
-      final images = <String>[];
-      document.querySelectorAll('ul.splide__list > li').forEach((li) {
-        final href = li.querySelector('a')?.attributes['href'];
-        if (href != null) {
-          images.add(href);
-        }
-      });
-
-      if (images.isNotEmpty) {
-        return TikTokResult(
-          title: desc,
-          author: '',
-          authorName: nickname,
-          duration: 0,
-          cover: avatar,
-          videoUrl: '',
-          videoUrlNoWatermark: '',
-          music: '',
-          playCount: 0,
-          diggCount: _parseCount(likeCount),
-          commentCount: _parseCount(commentCount),
-          shareCount: _parseCount(shareCount),
-          downloadCount: 0,
-          images: images,
-        );
-      }
-
-      // Parse video link
-      final videoUrl = document.querySelector('a.without_watermark')?.attributes['href'] ?? '';
-      final musicUrl = document.querySelector('a.music')?.attributes['href'] ?? '';
-
-      return TikTokResult(
-        title: desc,
-        author: '',
-        authorName: nickname,
-        duration: 0,
-        cover: avatar,
-        videoUrl: videoUrl,
-        videoUrlNoWatermark: videoUrl,
-        music: musicUrl,
-        playCount: 0,
-        diggCount: _parseCount(likeCount),
-        commentCount: _parseCount(commentCount),
-        shareCount: _parseCount(shareCount),
-        downloadCount: 0,
-        images: [],
-      );
-    } catch (error) {
-      throw Exception('SSSTik download failed: $error');
-    }
-  }
-
-  /// Extract TT value from HTML
-  String? _extractTTValue(String html) {
-    final regex = RegExp(r's_tt\s*=\s*["\' + "'" + r']([^"\' + "'" + r']+)["\' + "'" + r']');
-    final match = regex.firstMatch(html);
-    return match?.group(1);
-  }
-
-  /// Parse count string to integer (handles K, M notations)
-  int _parseCount(String count) {
-    if (count.isEmpty) return 0;
-    
-    count = count.trim().toUpperCase();
-    if (count.contains('K')) {
-      return (double.parse(count.replaceAll('K', '')) * 1000).toInt();
-    } else if (count.contains('M')) {
-      return (double.parse(count.replaceAll('M', '')) * 1000000).toInt();
-    }
-    
-    return int.tryParse(count) ?? 0;
-  }
-
   /// Check if URL is TikTok slide/image post
   bool isSlidePost(TikTokResult result) {
     return result.images.isNotEmpty;
-  }
-
-  /// Get video without watermark
-  String? getNoWatermarkUrl(TikTokResult result) {
-    return result.videoUrlNoWatermark;
   }
 }

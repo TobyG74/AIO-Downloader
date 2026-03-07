@@ -4,9 +4,10 @@ class TikTokResult {
   final String authorName;
   final int duration;
   final String cover;
-  final String videoUrl;
-  final String videoUrlNoWatermark;
-  final String music;
+  final String videoUrl; // Standard MP4 (no watermark)
+  final String videoUrlHD; // HD quality
+  final String videoUrlWatermark; // With watermark
+  final String music; // MP3 audio URL
   final int playCount;
   final int diggCount;
   final int commentCount;
@@ -21,7 +22,8 @@ class TikTokResult {
     required this.duration,
     required this.cover,
     required this.videoUrl,
-    required this.videoUrlNoWatermark,
+    this.videoUrlHD = '',
+    this.videoUrlWatermark = '',
     required this.music,
     required this.playCount,
     required this.diggCount,
