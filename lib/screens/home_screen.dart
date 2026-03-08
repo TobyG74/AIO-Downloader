@@ -803,10 +803,21 @@ class _SocialLinkButton extends StatelessWidget {
         onTap: () async {
           final uri = Uri.parse(url);
           try {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            } else {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Cannot open link')),
+                );
+              }
+            }
           } catch (e) {
-            // Fallback if external app fails
-            await launchUrl(uri);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: $e')),
+              );
+            }
           }
         },
         child: Padding(
@@ -873,12 +884,24 @@ class _ContributorRow extends StatelessWidget {
     required this.githubLabel,
   });
 
-  Future<void> _launch(String url) async {
+  Future<void> _launch(String url, BuildContext context) async {
     final uri = Uri.parse(url);
     try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      await launchUrl(uri);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cannot open link')),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 
@@ -914,7 +937,7 @@ class _ContributorRow extends StatelessWidget {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () => _launch(igUrl),
+                      onTap: () => _launch(igUrl, context),
                       child: Row(
                         children: [
                           const FaIcon(FontAwesomeIcons.instagram,
@@ -932,7 +955,7 @@ class _ContributorRow extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     GestureDetector(
-                      onTap: () => _launch(githubUrl),
+                      onTap: () => _launch(githubUrl, context),
                       child: Row(
                         children: [
                           FaIcon(FontAwesomeIcons.github,
